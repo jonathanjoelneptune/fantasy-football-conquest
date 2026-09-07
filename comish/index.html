@@ -1,36 +1,17 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex,nofollow" />
-  <title>Fantasy Football Conquest — Commissioner</title>
-  <script>
-    (function () {
-      var target = '../?comish=1';
-      try {
-        var hash = window.location.hash || '';
-        if (hash && hash !== '#') target += hash;
-      } catch (e) {}
-      window.location.replace(target);
-    })();
-  </script>
-  <noscript>
-    <meta http-equiv="refresh" content="0; url=../?comish=1" />
-  </noscript>
-  <style>
-    html,body{height:100%;margin:0}
-    body{display:grid;place-items:center;background:#f4efe4;color:#253047;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    .card{max-width:520px;margin:24px;padding:24px 28px;border:1px solid #c9a66b;border-radius:16px;background:#fffdf8;box-shadow:0 18px 45px rgba(37,48,71,.12);text-align:center}
-    h1{margin:0 0 8px;font-size:1.35rem;color:#7a5512}
-    p{margin:0;line-height:1.5}
-    a{color:#7a5512;font-weight:700}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Fantasy Football Conquest • Commissioner</title>
+<script>
+(function(){
+  var base=new URL('../',location.href);
+  base.searchParams.set('comish','1');
+  location.replace(base.href);
+})();
+</script>
 </head>
-<body>
-  <div class="card">
-    <h1>Opening Commissioner Mode…</h1>
-    <p>If you are not redirected automatically, <a href="../?comish=1">continue to Fantasy Football Conquest</a>.</p>
-  </div>
-</body>
+<body style="font-family:system-ui;background:#0a1220;color:#f4d486;display:grid;place-items:center;min-height:100vh;margin:0">Opening commissioner console…</body>
 </html>
