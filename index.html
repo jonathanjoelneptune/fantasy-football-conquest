@@ -3162,6 +3162,33 @@ html[data-theme="light"] .pulseMatchV813 .pulseDividerV813:before,html[data-them
 }
 </style>
 
+
+<style id="v814RealtimeOverlayStyles">
+/* v8.14 — isolated live overlay + near-real-time scoreboard ---------------- */
+.mapcard{isolation:isolate}
+#mapSvg{z-index:1!important;backface-visibility:hidden;transform:translateZ(0)}
+#liveOverlaySvgV814{
+  position:absolute;inset:0;width:100%;height:100%;display:block;z-index:3;
+  overflow:visible;pointer-events:none;isolation:isolate;contain:paint;
+  backface-visibility:hidden;transform:translateZ(0);
+}
+#liveOverlaySvgV814 .liveBattleGroup{pointer-events:auto;cursor:pointer}
+#liveOverlaySvgV814 .battleHeroTokenV811{pointer-events:auto}
+#liveOverlaySvgV814 .liveFrontPath,
+#liveOverlaySvgV814 .liveFrontHalo,
+#liveOverlaySvgV814 .liveFrontRidge,
+#liveOverlaySvgV814 .liveGroundShadow{
+  /* Changing SVG path geometry with a CSS d-transition caused full-SVG
+     invalidations in Chromium. The overlay is separate now, and geometry
+     updates are immediate while the marching dash animation supplies motion. */
+  transition:opacity .16s ease,stroke-width .16s ease!important;
+}
+#liveOverlaySvgV814 .liveBattleGroup.v813PersistentBattle{transition:opacity .14s ease!important}
+#liveOverlaySvgV814 .battleHeroTokenV811{will-change:transform;transform-box:fill-box;transform-origin:center}
+.mapcard.live-overlay-v814>#mapSvg{pointer-events:auto}
+.liveSyncCadenceV814{font-variant-numeric:tabular-nums}
+</style>
+
 </head>
 <body data-release="8.11">
   <div id="leagueLoadingOverlay" aria-live="polite" aria-label="Loading League of Olympus">
@@ -13398,7 +13425,7 @@ html[data-theme="light"] .pulseMatchV813 .pulseDividerV813:before,html[data-them
   }
   function liveFeedHtmlV808(g,limit=3){
     if(!g||g.historical)return'';const rows=liveFeedForV808(g,limit),colorFor=e=>teamById[e.teamId]?.color||'#e6bd69';
-    return `<div class="fantasyFeedV808" data-fantasy-feed-v808="${escapeHtml(String(g.id))}"><div class="fantasyFeedHeadV808"><span>⚡ Live Fantasy Scoring</span><span>5-second score tracking</span></div><div class="fantasyFeedListV808">${rows.length?rows.map(e=>`<div class="fantasyFeedItemV808 ${Number(e.delta)<0?'negative':''}" style="--feed-color:${escapeHtml(colorFor(e))}"><span class="feedDeltaV808">${Number(e.delta)>0?'+':''}${hubFmt(e.delta,1)}</span><div class="feedMainV808"><strong>${escapeHtml(e.player||'Player')}</strong><span class="feedWhyV808">${escapeHtml(e.detail||'Sleeper scoring update')}</span></div><time>${new Date(Number(e.ts||Date.now())).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}</time></div>`).join(''):`<div class="fantasyFeedEmptyV808">Waiting for the first fantasy scoring change. New points will appear here automatically.</div>`}</div></div>`;
+    return `<div class="fantasyFeedV808" data-fantasy-feed-v808="${escapeHtml(String(g.id))}"><div class="fantasyFeedHeadV808"><span>⚡ Live Fantasy Scoring</span><span>Near-real-time score tracking</span></div><div class="fantasyFeedListV808">${rows.length?rows.map(e=>`<div class="fantasyFeedItemV808 ${Number(e.delta)<0?'negative':''}" style="--feed-color:${escapeHtml(colorFor(e))}"><span class="feedDeltaV808">${Number(e.delta)>0?'+':''}${hubFmt(e.delta,1)}</span><div class="feedMainV808"><strong>${escapeHtml(e.player||'Player')}</strong><span class="feedWhyV808">${escapeHtml(e.detail||'Sleeper scoring update')}</span></div><time>${new Date(Number(e.ts||Date.now())).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}</time></div>`).join(''):`<div class="fantasyFeedEmptyV808">Waiting for the first fantasy scoring change. New points will appear here automatically.</div>`}</div></div>`;
   }
 
   // Give Big Board cards stable matchup IDs so lineup/score patches never depend
@@ -13896,7 +13923,7 @@ html[data-theme="light"] .pulseMatchV813 .pulseDividerV813:before,html[data-them
   const fetchNflWatchV811Base=fetchNflWatchV794;
   fetchNflWatchV794=async function(...args){const r=await fetchNflWatchV811Base.apply(this,args);queueBattleHeroesV811(false);return r;};
   const collectSiteDefaultsV811Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV811Base();p.siteVersion='8.13';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV811Base();p.siteVersion='8.14';return p;};
   setTimeout(()=>{ensureBattleHeroLayerV811();queueBattleHeroesV811(true);},900);
 
 
@@ -14062,7 +14089,7 @@ html[data-theme="light"] .pulseMatchV813 .pulseDividerV813:before,html[data-them
   renderLiveBattleFronts=function(...args){const r=renderLiveBattleFrontsV812Base.apply(this,args);requestAnimationFrame(()=>{bringHeroLayerToFrontV812();queueBattleHeroesV811(true);});return r;};
 
   const collectSiteDefaultsV812Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV812Base();p.siteVersion='8.13';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV812Base();p.siteVersion='8.14';return p;};
   setTimeout(()=>{decoratePlayerOwnershipPillsV812();bringHeroLayerToFrontV812();queueBattleHeroesV811(true);},1000);
 
 
@@ -14194,8 +14221,187 @@ html[data-theme="light"] .pulseMatchV813 .pulseDividerV813:before,html[data-them
   applyBattleFocusVisualsV810=function(){const r=applyBattleFocusVisualsV813Base.apply(this,arguments);restoreDynamicLayerOrderV813();return r;};
 
   const collectSiteDefaultsV813Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV813Base();p.siteVersion='8.13';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV813Base();p.siteVersion='8.14';return p;};
   setTimeout(()=>{stabilizeBaseStageV813();restoreDynamicLayerOrderV813();renderLeaguePulseV809();queueBattleHeroesV811?.(true);},1100);
+
+
+
+  // v8.14 — real-time scoring + isolated live overlay ------------------------
+  // Keep the expensive island SVG completely separate from the frequently
+  // changing battle/Hero DOM. Live data can now repaint its own transparent
+  // SVG without invalidating the static map underneath it.
+  const LIVE_FAST_V814={
+    visibleMs:1250,
+    hiddenMs:5000,
+    stateMs:15000,
+    projectionMs:10000,
+    rosterMs:45000,
+    lastStateAt:0,
+    timer:null,
+    focusSig:'',
+    scoreSeq:0
+  };
+  LIVE_SYNC_V808.projectionMs=LIVE_FAST_V814.projectionMs;
+  LIVE_SYNC_V808.rosterMs=LIVE_FAST_V814.rosterMs;
+
+  function ensureLiveOverlayV814(){
+    const card=document.querySelector('.mapcard'),base=document.getElementById('mapSvg');if(!card||!base)return null;
+    let over=document.getElementById('liveOverlaySvgV814');
+    if(!over){
+      over=document.createElementNS(SVG_NS,'svg');over.id='liveOverlaySvgV814';over.setAttribute('aria-hidden','true');over.setAttribute('focusable','false');
+      over.setAttribute('viewBox',base.getAttribute('viewBox')||'0 0 1000 760');over.setAttribute('preserveAspectRatio',base.getAttribute('preserveAspectRatio')||'xMidYMid meet');
+      const defs=document.createElementNS(SVG_NS,'defs');defs.id='liveOverlayDefsV814';over.appendChild(defs);
+      base.insertAdjacentElement('afterend',over);card.classList.add('live-overlay-v814');
+      const sync=()=>{const vbNow=base.getAttribute('viewBox');if(vbNow&&over.getAttribute('viewBox')!==vbNow)over.setAttribute('viewBox',vbNow);const pa=base.getAttribute('preserveAspectRatio')||'xMidYMid meet';if(over.getAttribute('preserveAspectRatio')!==pa)over.setAttribute('preserveAspectRatio',pa);};
+      new MutationObserver(sync).observe(base,{attributes:true,attributeFilter:['viewBox','preserveAspectRatio']});
+      window.addEventListener('resize',sync,{passive:true});sync();
+    }
+    return over;
+  }
+  function liveOverlayDefsV814(){const over=ensureLiveOverlayV814();if(!over)return null;let defs=over.querySelector('#liveOverlayDefsV814');if(!defs){defs=document.createElementNS(SVG_NS,'defs');defs.id='liveOverlayDefsV814';over.insertBefore(defs,over.firstChild);}return defs;}
+  function moveDynamicLayersToOverlayV814(){
+    const over=ensureLiveOverlayV814();if(!over)return;
+    const focus=document.getElementById('battleFocusLayerV810'),live=document.getElementById('liveBattleLayer'),hero=document.getElementById('battleHeroLayerV811');
+    [focus,live,hero].forEach(el=>{if(el&&el.parentNode!==over)over.appendChild(el);});
+    if(focus&&focus.parentNode===over)over.appendChild(focus);if(live&&live.parentNode===over)over.appendChild(live);if(hero&&hero.parentNode===over)over.appendChild(hero);
+  }
+
+  // All dynamic-layer factories now target the isolated overlay SVG.
+  ensureLiveBattleUi=function(){
+    const over=ensureLiveOverlayV814();let layer=document.getElementById('liveBattleLayer');if(!layer){layer=document.createElementNS(SVG_NS,'g');layer.id='liveBattleLayer';layer.setAttribute('class','liveBattleLayer');}if(over&&layer.parentNode!==over)over.appendChild(layer);
+    let badge=document.querySelector('.mapcard .liveBattleBadge');if(!badge){badge=document.createElement('div');badge.className='liveBattleBadge';badge.textContent='⚔ Live Battle Fronts';document.querySelector('.mapcard')?.appendChild(badge);}
+    let panel=document.querySelector('.mapcard .warCorrespondent');if(!panel){panel=document.createElement('div');panel.className='warCorrespondent';panel.innerHTML='<button class="warCorrespondentClose" type="button">×</button><div class="wcEyebrow">War Correspondent</div><h4></h4><div class="warCorrespondentGrid"></div>';document.querySelector('.mapcard')?.appendChild(panel);panel.querySelector('.warCorrespondentClose')?.addEventListener('click',()=>{panel.classList.remove('open');selectedLiveBattleId=null;document.querySelectorAll('.liveBattleGroup').forEach(g=>g.classList.remove('selected'));});}
+    return {layer,panel};
+  };
+  ensureBattleFocusLayerV810=function(){
+    const over=ensureLiveOverlayV814();let layer=document.getElementById('battleFocusLayerV810');if(!layer){layer=document.createElementNS(SVG_NS,'g');layer.id='battleFocusLayerV810';}
+    if(over&&layer.parentNode!==over){const live=document.getElementById('liveBattleLayer');if(live?.parentNode===over)over.insertBefore(layer,live);else over.appendChild(layer);}return layer;
+  };
+  ensureBattleHeroLayerV811=function(){
+    const over=ensureLiveOverlayV814();let layer=document.getElementById('battleHeroLayerV811');if(!layer)layer=svgElV792('g',{id:'battleHeroLayerV811'});if(over&&layer.parentNode!==over)over.appendChild(layer);return layer;
+  };
+  bringHeroLayerToFrontV812=function(){try{const over=ensureLiveOverlayV814(),layer=document.getElementById('battleHeroLayerV811');if(over&&layer&&over.lastElementChild!==layer)over.appendChild(layer);}catch(_){}};
+  restoreDynamicLayerOrderV813=function(){try{const over=ensureLiveOverlayV814(),focus=document.getElementById('battleFocusLayerV810'),live=document.getElementById('liveBattleLayer'),hero=document.getElementById('battleHeroLayerV811');if(!over)return;if(focus&&focus.parentNode!==over)over.appendChild(focus);if(live&&live.parentNode!==over)over.appendChild(live);if(hero&&hero.parentNode!==over)over.appendChild(hero);const order=[focus,live,hero].filter(Boolean);order.forEach((el,i)=>{const expected=over.children[i+1];if(expected!==el)over.appendChild(el);});}catch(_){}};
+
+  // Gradients and Hero clipping belong to the live SVG too, preventing the
+  // browser from re-rasterizing the base-map defs when scores change.
+  ensureBattleGradientV813=function(g,geom){
+    const id=`liveGrad_${String(g.id).replace(/[^a-zA-Z0-9_-]/g,'_')}`,over=ensureLiveOverlayV814(),defs=liveOverlayDefsV814();let grad=over?.querySelector(`#${CSS.escape(id)}`);
+    if(!grad){grad=svgElV792('linearGradient',{id,gradientUnits:'userSpaceOnUse'});[0,.48,.52,1].forEach(o=>grad.appendChild(svgElV792('stop',{offset:o})));defs?.appendChild(grad);}
+    const attrs={x1:geom.a.x,y1:geom.a.y,x2:geom.b.x,y2:geom.b.y};Object.entries(attrs).forEach(([k,v])=>{const nv=String(v);if(grad.getAttribute(k)!==nv)grad.setAttribute(k,nv);});
+    const ca=teamById[g.a]?.color||'#fff',cb=teamById[g.b]?.color||'#fff',stops=grad.querySelectorAll('stop');[ca,ca,cb,cb].forEach((c,i)=>{if(stops[i]?.getAttribute('stop-color')!==c)stops[i]?.setAttribute('stop-color',c);});return id;
+  };
+  function moveHeroClipToOverlayV814(node){
+    try{const img=node?.querySelector('.heroPhotoV811'),raw=img?.getAttribute('clip-path')||'',m=raw.match(/#([^\)]+)/);if(!m)return;const id=m[1],clip=document.getElementById(id),defs=liveOverlayDefsV814();if(clip&&defs&&clip.parentNode!==defs)defs.appendChild(clip);}catch(_){}
+  }
+  // New Hero nodes create their clip paths directly in the overlay defs. This
+  // keeps even one-time player entrances from mutating the static map SVG.
+  heroTokenV811=function({player,teamId,x,y,focus=false,featured=false,reserve=false,matchupId=''}){
+    if(!player?.pid)return null;const color=teamById?.[teamId]?.color||'#e6bd69',name=player.name||heroPlayerNameV811(player.pid),pos=String(player.pos||'').toUpperCase(),game=heroGameStateV811(player.pid),r=heroRadiusV811(player,{focus,featured}),prev=HERO_SCORE_CACHE_V811.get(String(player.pid)),score=Number(player.score||0),surged=Number.isFinite(prev)&&score>prev+.09;
+    const classes=['battleHeroTokenV811',reserve?'heroReserveV811':'',featured?'heroFeaturedV811':'',game.state==='in'?'heroActiveV811':game.state==='post'?'heroFinalV811':'heroPregameV811',game.hasBall?'heroPossessionV811':'',pos==='DEF'?'heroDefenseV811':'',score>=50?'heroTier50V811':score>=40?'heroTier40V811':score>=30?'heroTier30V811':'',surged?'heroSurgeV811':''].filter(Boolean).join(' ');
+    const g=svgElV792('g',{class:classes,transform:`translate(${x} ${y})`});g.dataset.playerId=String(player.pid);g.dataset.matchupId=String(matchupId);g.style.setProperty('--hero-color',color);
+    const title=svgElV792('title');title.textContent=`${name} • ${teamById?.[teamId]?.name||teamId}\n${hubFmt(score,1)} pts • Proj ${hubFmt(player.proj,1)}${player.meta?`\n${player.meta}`:''}`;g.appendChild(title);
+    g.appendChild(svgElV792('circle',{r:r+3.2,class:'heroOuterV811',stroke:color}));g.appendChild(svgElV792('circle',{r:r,class:'heroInnerV811'}));
+    const initials=svgElV792('text',{x:0,y:.5,class:'heroFallbackV811','font-size':Math.max(5.8,r*.66)});initials.textContent=heroInitialsV811(name,pos,player.pid);g.appendChild(initials);
+    const url=heroPhotoUrlV811(player.pid,pos);if(url){const clipId=`heroClipV814_${String(matchupId).replace(/[^a-zA-Z0-9_-]/g,'_')}_${String(player.pid).replace(/[^a-zA-Z0-9_-]/g,'_')}`,defs=liveOverlayDefsV814();let clip=defs?.querySelector(`#${CSS.escape(clipId)}`);if(!clip){clip=svgElV792('clipPath',{id:clipId});clip.appendChild(svgElV792('circle',{cx:0,cy:0,r:r-.8}));defs?.appendChild(clip);}else{const c=clip.querySelector('circle');if(c)c.setAttribute('r',String(r-.8));}g.appendChild(svgElV792('image',{x:-r,y:-r,width:r*2,height:r*2,href:url,class:'heroPhotoV811','clip-path':`url(#${clipId})`,preserveAspectRatio:'xMidYMid slice'}));}
+    const statusColor=game.state==='in'?(game.hasBall?'#f2c963':'#3ddc84'):(game.state==='post'?'#9aa6b8':'#738099');g.appendChild(svgElV792('circle',{cx:r*.72,cy:-r*.72,r:Math.max(2.2,r*.18),fill:statusColor,class:'heroStatusDotV811'}));
+    g.addEventListener('click',ev=>{ev.stopPropagation();if(!warFocusBattleV797||String(selectedLiveBattleId)!==String(matchupId)){enterBattleFocusV810(matchupId,{openWar:true});return;}try{setDesktopSideView?.('war');renderDesktopWarCorrespondentV787?.(matchupId);setTimeout(()=>{const cell=document.querySelector(`#desktopWarPanel [data-player-id=\"${CSS.escape(String(player.pid))}\"]`);cell?.scrollIntoView({behavior:'smooth',block:'center'});},40);}catch(_){}});return g;
+  };
+  const patchHeroNodeV814Base=patchHeroNodeV813;
+  patchHeroNodeV813=function(node,d,focus,matchupId){const r=patchHeroNodeV814Base.apply(this,arguments);moveHeroClipToOverlayV814(node);return r;};
+
+  // Focus writes to the base map only when the selected battle actually changes.
+  // Score ticks no longer retoggle 72 territory/label elements every second.
+  applyBattleFocusVisualsV810=function(){
+    const card=document.querySelector('.mapcard'),g=selectedBattleV810(),hud=ensureBattleFocusHudV810(),active=!!(warFocusBattleV797&&g&&currentSiteView==='conquest'),idsArr=active?battleFocusTerritoryIdsV810(g):[],teamArr=active?battleFocusTeamIdsV810(g):[],sig=stableStringV795({active,id:active?String(g.id):'',ids:idsArr,teams:teamArr,view:currentSiteView});
+    document.querySelectorAll('.liveBattleGroup').forEach(el=>el.classList.toggle('selected',active&&String(el.dataset.matchupId)===String(g?.id)));
+    if(sig===LIVE_FAST_V814.focusSig)return;LIVE_FAST_V814.focusSig=sig;
+    card?.classList.toggle('focus-battle',active);const ids=new Set(idsArr),teamIds=new Set(teamArr);
+    Object.entries(pathByTerritory||{}).forEach(([id,p])=>{const want=active&&ids.has(id);if(p?.classList.contains('battle-focus-territory-v810')!==want)p?.classList.toggle('battle-focus-territory-v810',want);});
+    [...(provinceLabelLayer?.children||[])].forEach((el,i)=>{const id=territoryDefs[i]?.id,want=active&&ids.has(id);if(el.classList.contains('battle-focus-label-v810')!==want)el.classList.toggle('battle-focus-label-v810',want);if(id&&!el.dataset.territory)el.dataset.territory=id;});
+    tagArmyFlagsV810();document.querySelectorAll('#armyLayer [data-team],#seaOutpostLayer [data-team],#olympusContestLayer [data-team]').forEach(el=>{const want=active&&teamIds.has(String(el.dataset.team));if(el.classList.contains('battle-focus-team-v810')!==want)el.classList.toggle('battle-focus-team-v810',want);});
+    renderBattleFocusOverlayV810(active?g:null);
+    if(hud){if(active){const an=teamById?.[g.a]?.name||g.a,bn=teamById?.[g.b]?.name||g.b,ca=teamById?.[g.a]?.color||'#fff',cb=teamById?.[g.b]?.color||'#fff';hud.querySelector('.focusTeamsV810').innerHTML=`<span class="focusDotV810" style="background:${ca}"></span>${escapeHtml(an)} <span style="color:#97a5bd;font-weight:700">vs.</span> <span class="focusDotV810" style="background:${cb}"></span>${escapeHtml(bn)}`;}else hud.querySelector('.focusTeamsV810').textContent='Focused battle';}
+    restoreDynamicLayerOrderV813();
+  };
+  let focusOverlaySigV814='';
+  renderBattleFocusOverlayV810=function(g){
+    const layer=ensureBattleFocusLayerV810(),active=!!(g&&warFocusBattleV797),ids=active?battleFocusTerritoryIdsV810(g):[],teams=active?battleFocusTeamIdsV810(g):[],sig=stableStringV795({active,id:active?String(g.id):'',ids,teams,colors:teams.map(t=>teamById?.[t]?.color||'')});if(sig===focusOverlaySigV814)return;focusOverlaySigV814=sig;layer.replaceChildren();if(!active)return;
+    layer.appendChild(svgElV792('rect',{x:-180,y:-90,width:1400,height:1020,class:'battleFocusVeilV813'}));ids.forEach((id,i)=>{const p=pathByTerritory?.[id],color=teamById?.[teams[i]||teams[0]]?.color||'#e6bd69';if(!p)return;const d=p.getAttribute('d');if(!d)return;layer.appendChild(svgElV792('path',{d,fill:color,class:'battleFocusFillV810'}));layer.appendChild(svgElV792('path',{d,fill:'none',stroke:color,class:'battleFocusOutlineV810'}));layer.appendChild(svgElV792('path',{d,fill:'none',class:'battleFocusInnerV810'}));});
+  };
+
+  function setAttrStableV814(el,name,value){if(!el)return;const v=String(value);if(el.getAttribute(name)!==v)el.setAttribute(name,v);}
+  function patchPipsV814(layer,geom,g){
+    if(!layer)return;const desired=[];[[g.x,g.a,.18],[g.y,g.b,.82]].forEach(([row,teamId,t])=>{const n=liveReserveCount(row),base=cubicBattlePointV789(geom.a,geom.c1,geom.c2,geom.b,t);for(let i=0;i<n;i++)desired.push({cx:base.x+(i-(n-1)/2)*4.2,cy:base.y+((i%2)?2:-2),fill:teamById[teamId]?.color||'#fff'});});
+    while(layer.children.length<desired.length)layer.appendChild(svgElV792('circle',{r:2.2,class:'reinforcementPip'}));while(layer.children.length>desired.length)layer.lastElementChild?.remove();desired.forEach((d,i)=>{const c=layer.children[i];setAttrStableV814(c,'cx',d.cx);setAttrStableV814(c,'cy',d.cy);setAttrStableV814(c,'fill',d.fill);});
+  }
+  updatePersistentBattleGroupV813=function(group,g,idx){
+    const geom=battleGeomV813(g,idx),gradId=ensureBattleGradientV813(g,geom),state=liveFrontState(g),geomSig=`${geom.d}|${geom.dRev}`;
+    group.dataset.aTerritory=geom.stake.aTerr?.id||'';group.dataset.bTerritory=geom.stake.bTerr?.id||'';group.dataset.liveSignature=battleVisualSigV795(g);
+    setAttrStableV814(group.querySelector('.v813Ground'),'d',geom.ground);setAttrStableV814(group.querySelector('.v813Halo'),'d',geom.d);const front=group.querySelector('.v813Front');setAttrStableV814(front,'d',geom.d);setAttrStableV814(front,'stroke',`url(#${gradId})`);setAttrStableV814(group.querySelector('.v813Ridge'),'d',geom.d);
+    const flags=group.querySelector('.v813FlagLayer'),flagSig=`${g.a}:${g.b}:${geom.a.x.toFixed(1)}:${geom.a.y.toFixed(1)}:${geom.b.x.toFixed(1)}:${geom.b.y.toFixed(1)}`;if(flags&&flags.dataset.sig!==flagSig){flags.replaceChildren(liveFlagV788(geom.a.x,geom.a.y,teamById[g.a]?.color||'#fff',false),liveFlagV788(geom.b.x,geom.b.y,teamById[g.b]?.color||'#fff',true));flags.dataset.sig=flagSig;}
+    const troops=group.querySelector('.v813TroopLayer'),troopSig=`${state}|${geomSig}|${g.a}|${g.b}`;if(troops&&troops.dataset.sig!==troopSig){troops.replaceChildren(...liveTroopsForStateV792(state,g,geom.d,geom.dRev,geom.a,geom.c1,geom.c2,geom.b));troops.dataset.sig=troopSig;}
+    const swords=group.querySelector('.v813SwordLayer');if(swords){let pair=swords.querySelector('.liveFrontSwordPair');if(!pair){pair=liveCrossedSwordsV793(geom.front.x,geom.front.y+3,teamById[g.a]?.color||'#fff',teamById[g.b]?.color||'#fff');swords.appendChild(pair);}setAttrStableV814(pair,'transform',`translate(${geom.front.x} ${geom.front.y+3})`);}
+    const stateText=group.querySelector('.v813State');if(stateText){setAttrStableV814(stateText,'x',geom.front.x);setAttrStableV814(stateText,'y',geom.front.y-16);if(stateText.textContent!==state)stateText.textContent=state;}
+    patchPipsV814(group.querySelector('.v813PipLayer'),geom,g);group.classList.toggle('selected',warFocusBattleV797&&String(selectedLiveBattleId)===String(g.id));
+  };
+
+  // Render only the transparent live SVG. The base island never gets appended,
+  // reordered, or touched by the score poll.
+  renderLiveBattleFronts=function(force=false,changedIds=null){
+    const {layer,panel}=ensureLiveBattleUi(),card=document.querySelector('.mapcard');if(!layer||!card)return;const liveWeek=resolvedCurrentSleeperWeek(),show=currentSiteView==='conquest'&&!isPlaying&&(liveBattleSimulation.active||(activeSeasonId==='year2'&&sleeperData.connected&&liveWeek>=1&&Number(currentWeek)===liveWeek));card.classList.toggle('live-battles-active',show);
+    if(!show){layer.style.display='none';panel?.classList.remove('open');const hero=document.getElementById('battleHeroLayerV811');if(hero)hero.style.display='none';return;}layer.style.display='';const hero=document.getElementById('battleHeroLayerV811');if(hero)hero.style.display='';
+    const groups=liveWeekGroups(),wanted=new Set(groups.map(g=>String(g.id)));[...layer.querySelectorAll('.liveBattleGroup')].forEach(el=>{if(!wanted.has(String(el.dataset.matchupId)))el.remove();});
+    groups.forEach((g,idx)=>{const id=String(g.id),existing=ensurePersistentBattleGroupV813(g),sig=battleVisualSigV795(g);if(force||existing.dataset.liveSignature!==sig||(!changedIds?false:changedIds.includes(id)))updatePersistentBattleGroupV813(existing,g,idx);});
+    applyBattleFocusVisualsV810();queueBattleHeroesV811?.(false);restoreDynamicLayerOrderV813();
+  };
+
+  // Score changes are published immediately. Stat details are enriched in the
+  // background so an explanatory stat request can never hold up the scoreboard.
+  function scoringChangesV814(prevRows,nextRows){
+    const changes=[],oldBy=rowMapByRosterV808(prevRows),inv=sleeperInverseMapping();(nextRows||[]).forEach(row=>{const old=oldBy.get(Number(row?.roster_id))||{},oldPts=old?.players_points||{},newPts=row?.players_points||{},starters=new Set((row?.starters||[]).map(String));Object.keys(newPts).forEach(pid=>{pid=String(pid);if(!starters.has(pid))return;const delta=Number(newPts[pid]||0)-Number(oldPts[pid]||0);if(Math.abs(delta)>.0001)changes.push({pid,delta,row,mid:String(row.matchup_id),teamId:inv[Number(row.roster_id)],score:Number(newPts[pid]||0)});});});return changes;
+  }
+  function publishScoringChangesV814(week,changes){
+    const now=Date.now();changes.forEach((ch,i)=>{const player=hubPlayerName(ch.pid),team=teamById[ch.teamId]?.name||ch.teamId||'Fantasy team';ch.ts=now+i;addLiveFeedEventV808(week,ch.mid,{pid:ch.pid,player,team,teamId:ch.teamId,delta:ch.delta,detail:'Scoring update received • stat detail loading…',ts:ch.ts});});return changes;
+  }
+  async function enrichScoringChangesV814(week,changes,beforeStats,attempt=0){
+    if(!changes.length)return;try{await fetchLiveWeekStatsV808(week,true);const after=LIVE_SYNC_V808.stats.map;let needsRetry=false;changes.forEach(ch=>{const detail=describeStatDeltaV808(ch.pid,beforeStats.get(ch.pid)||{},after.get(ch.pid)||{},ch.delta);if(/^Sleeper scoring update/.test(detail))needsRetry=true;const key=liveFeedKeyV808(week,ch.mid),arr=LIVE_SYNC_V808.feed.get(key)||[],event=arr.find(e=>String(e.pid)===String(ch.pid)&&Math.abs(Number(e.delta)-Number(ch.delta))<.0001&&Math.abs(Number(e.ts)-Number(ch.ts))<20);if(event)event.detail=detail;});saveLiveFeedV808();patchLiveDecorationsV808?.();renderLeaguePulseV809?.();if(needsRetry&&attempt<1)setTimeout(()=>enrichScoringChangesV814(week,changes,new Map(LIVE_SYNC_V808.stats.map),attempt+1),1400);}catch(_){}
+  }
+
+  async function fastSleeperPollV814(){
+    if(livePollStateV795.inFlight||!sleeperData.connected||!sleeperData.leagueId)return;livePollStateV795.inFlight=true;const now=Date.now();
+    try{
+      let state=sleeperData.state||null;if(!state||now-LIVE_FAST_V814.lastStateAt>=LIVE_FAST_V814.stateMs){state=await sleeperFetch('/state/nfl');LIVE_FAST_V814.lastStateAt=Date.now();}
+      const w=Math.max(1,Math.min(17,battleDisplayWeekV807(state)||Number(state?.week||1))),rows=await sleeperFetch(`/league/${sleeperData.leagueId}/matchups/${w}`),prevRows=sleeperData.weeks?.[w]||[],nextStateSig=stateSigV795(state),nextWeekSig=weekSigV795(rows),changedIds=matchupChangedIdsV795(prevRows,rows),stateChanged=nextStateSig!==livePollStateV795.lastStateSig,weekChanged=nextWeekSig!==livePollStateV795.lastWeekSig,scoreChanges=weekChanged?scoringChangesV814(prevRows,rows):[],beforeStats=new Map(LIVE_SYNC_V808.stats.map);
+      if(scoreChanges.length)publishScoringChangesV814(w,scoreChanges);
+      sleeperData.state=state;sleeperData.weeks[w]=rows;sleeperData.lastSync=new Date();sleeperData.error='';livePollStateV795.lastStateSig=nextStateSig;livePollStateV795.lastWeekSig=nextWeekSig;livePollStateV795.polls++;setLiveDataNoticeV804?.(false);
+      if(weekChanged){captureLiveWeekEvents();renderLiveBattleFronts(false,changedIds);patchWarCorrespondentV795(changedIds);patchBigBoardV795(changedIds);patchBigBoardLiveContextV807();patchLiveDecorationsV808();renderLeaguePulseV809?.();if(scoreChanges.length)setTimeout(()=>enrichScoringChangesV814(w,scoreChanges,beforeStats,0),0);}
+      else if(stateChanged){patchBigBoardLiveContextV807?.();renderLeaguePulseV809?.();queueBattleHeroesV811?.(false);}
+      if(Date.now()-LIVE_SYNC_V808.lastProjectionAt>=LIVE_SYNC_V808.projectionMs)refreshProjectionFeedV808(w,true).catch(()=>{});
+      if(Date.now()-LIVE_SYNC_V808.lastRosterAt>=LIVE_SYNC_V808.rosterMs)refreshRosterIdentityV808(false).catch(()=>{});
+      const status=document.querySelector('#sleeperStatusText');if(status)status.textContent=`Live · ${sleeperData.lastSync.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',second:'2-digit'})}`;
+    }catch(err){sleeperData.error=err?.message||String(err);setLiveDataNoticeV804?.(true,'Live fantasy data delayed • keeping the last update and retrying…');}
+    finally{livePollStateV795.inFlight=false;}
+  }
+  sleeperRefreshCurrentWeek=fastSleeperPollV814;
+  function pollDelayV814(){return document.visibilityState==='visible'?LIVE_FAST_V814.visibleMs:LIVE_FAST_V814.hiddenMs;}
+  scheduleSleeperAutoRefresh=function(){
+    if(sleeperRefreshTimer){clearTimeout(sleeperRefreshTimer);clearInterval(sleeperRefreshTimer);sleeperRefreshTimer=null;}if(!sleeperData.connected||sleeperData.autoRefresh===false)return;
+    const loop=async()=>{await fastSleeperPollV814();if(sleeperData.connected&&sleeperData.autoRefresh!==false)sleeperRefreshTimer=setTimeout(loop,pollDelayV814());};sleeperRefreshTimer=setTimeout(loop,150);
+  };
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&sleeperData.connected){LIVE_FAST_V814.lastStateAt=0;fastSleeperPollV814();}});
+
+  // Replace old five-second wording anywhere the live feed is rendered.
+  const liveFeedHtmlV814Base=liveFeedHtmlV808;
+  liveFeedHtmlV808=function(g,limit=3){return liveFeedHtmlV814Base.apply(this,arguments).replace('Near-real-time score tracking','Near-real-time score tracking');};
+
+  // Initialize the overlay before the first asynchronous league connection can
+  // create battle layers, then re-home anything an older initializer created.
+  ensureLiveOverlayV814();moveDynamicLayersToOverlayV814();
+  setTimeout(()=>{moveDynamicLayersToOverlayV814();restoreDynamicLayerOrderV813();renderLiveBattleFronts(true);},700);
+
+  const collectSiteDefaultsV814Base=collectSiteDefaults;
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV814Base();p.siteVersion='8.14';return p;};
 
 
     loadSeasonRegistry();loadDynastyRegistry();loadChronicleAwards();

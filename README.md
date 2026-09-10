@@ -1,17 +1,17 @@
-# Fantasy Football Conquest — v8.13
+# Fantasy Football Conquest — v8.14
 
 League-facing single-file GitHub Pages build.
 
-## v8.13 rendering refactor
-- Keeps the island/base map as a stable stage during live polling.
-- Uses persistent keyed battle-front SVG groups instead of replacing the whole battle layer on score changes.
-- Uses persistent keyed Hero nodes that move between territory staging points rather than being recreated.
-- Focus Battle no longer filters/repaints every territory; a single tactical veil dims the static stage.
-- Focused Heroes are distributed across the two territories and only relevant starters are shown: mustering, active, surging, and meaningful spent players.
-- D/ST remains inside its own territory.
-- All Battles shows at most one currently relevant Hero per matchup, and no pregame Hero until a player is actually mustering.
-- League Pulse was simplified and enlarged for readability.
-- Returning to League Pulse restores the full strategic battlefield.
+## v8.14 live-game stabilization
+- Polls Sleeper matchup scoring about every 1.25 seconds while the page is visible.
+- Publishes fantasy score changes to the UI immediately, then enriches the scoring-play explanation asynchronously.
+- Refreshes weekly projections every 10 seconds without blocking score updates.
+- Moves battle fronts, Tactical Focus, and Battle Heroes into a separate transparent SVG overlay so live animation no longer repaints the static island SVG.
+- Keeps battle paths, troops, swords, pips, and Hero nodes persistent; score ticks update attributes instead of rebuilding the battlefield.
+- Focus Battle only rewrites static-map emphasis when the selected battle actually changes.
+- Keeps the last good live state if a network request is delayed or fails.
+
+The display can only update as quickly as Sleeper publishes the underlying fantasy score, but the site no longer adds a five-second polling delay of its own.
 
 ## Deployment
 Upload `index.html`, `README.md`, and `comish/index.html` to the repository root/paths and commit to `main`. GitHub Pages should redeploy automatically.
