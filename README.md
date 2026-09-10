@@ -1,19 +1,15 @@
-# Fantasy Football Conquest — v8.15
+# Fantasy Football Conquest v8.16
 
-League-facing single-file GitHub Pages build.
+Static GitHub Pages build for the Fantasy Football Conquest board.
 
-## v8.15 hardened renderer
-- Keeps the near-real-time Sleeper score cadence while reducing unnecessary UI work.
-- Adds a compositor-cached static world snapshot for normal desktop live viewing. The 72-territory island is no longer the surface that repaints when the mouse moves or a fantasy score changes.
-- Adds a dedicated lightweight territory interaction SVG with one reusable hover outline instead of filters/brightness/drop-shadows on province paths.
-- Freezes indefinite decorative sea/wave animation during normal live play and strips expensive static-map SVG filters where they do not materially improve readability.
-- Keeps the existing isolated live SVG for battle lines, armies, swords, focus effects and Battle Heroes.
-- Focus Battle no longer changes classes/opacity/filter state across the base island; it is now overlay-only.
-- Coalesces visible UI mutations into a single animation frame and skips expensive Big Board, League Pulse, War Correspondent and Hero DOM work when those screens are not visible.
-- Pauses live SVG animation while the browser tab is hidden and backs hidden polling off to 8 seconds; returning to the page immediately resynchronizes.
-- Preserves manual desktop pan/zoom through the interaction layer and rebuilds the cached world only after a camera gesture settles.
+## v8.16
+- Corrects the hardened renderer so the sea backdrop is composited into the cached world instead of disappearing after the raster cache fades in.
+- Keeps the previous good raster visible while a replacement cache is built, eliminating the intentional cache-off/cache-on flash.
+- League Pulse is now a six-battle command view: all six matchups are designed to fit at once without the summary-stat cards or a global scoring-feed block.
+- Light-theme League Pulse has stronger borders, shadows, and higher-contrast win-probability/control bars.
+- Fantasy scoring plays are attached to their own matchup through a tiny lightning control. Hover/focus shows the recent plays in an attached popover; clicking pins/unpins it.
+- Scoring-play entries retain the color identity of the fantasy team responsible without making the whole card overly colorful.
 
-The goal of v8.15 is stability rather than new features: the map is the stage, and the war happens above it.
+Public entry: `index.html`
 
-## Deployment
-Upload `index.html`, `README.md`, and `comish/index.html` to the repository root/paths and commit to `main`. GitHub Pages should redeploy automatically.
+Commissioner entry: `comish/index.html`
