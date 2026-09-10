@@ -1,18 +1,18 @@
 # Fantasy Football Conquest
 
-Interactive fantasy-football conquest map, live Battle Correspondent, Big Board, and historical Chronicle.
+Interactive fantasy-football conquest map, live War Correspondent, Big Board, Battle Heroes, and historical Chronicle.
 
-Current release: **v8.11**
+Current release: **v8.12**
 
-## v8.11
-- Added **Battle Heroes** using Sleeper player headshots with fantasy-team color rings.
-- Strategic **All Battles** mode stays restrained: one featured Hero per side for each matchup.
-- **Focus Battle** reveals the starter layer across both involved territories and the battle corridor.
-- Pregame starters wait inside their home territory; active/high-impact offensive players can push into the opposing territory.
-- D/ST tokens always remain inside their own defending territory.
-- Active NFL players receive a live treatment, including a possession indicator when their team has the ball.
-- 30+, 40+, and 50+ performances progressively enlarge/glow without adding permanent map labels.
-- Player scoring increases trigger a brief Hero surge animation.
-- Clicking a Hero enters that matchup's Focus Battle; clicking a Hero while focused opens/centers its War Correspondent player row.
-- Portrait/landscape automatically limit reserve Hero density to keep the battlefield readable.
-- Hero rendering follows the existing differential live-update architecture rather than rebuilding the full map every poll.
+## v8.12
+- Toned manager/team colors down to **accent-only identity** across the Big Board, standings, dossiers, and Chronicle.
+- Fantasy-team pills on **Player Rankings** now carry the clearest season team-color treatment.
+- Increased League Pulse typography and spacing for desktop readability.
+- Returning from a focused War Correspondent matchup to **League Pulse** now restores **Show All Battles** automatically.
+- Focus Battle no longer auto-zooms the SVG map, eliminating the high-zoom flicker/glitch path.
+- Focused battles block manual Ctrl/Cmd zoom; general desktop zoom is capped before the known unstable range.
+- Strategic view now shows **one main Battle Hero per matchup**, reducing clutter from twelve simultaneous portraits.
+- Dynamic Hero selection prioritizes: recent scorer → currently playing starter → productive completed starter → next starter scheduled to play.
+- Late-game/Monday stars stay in reserve instead of dominating the battlefield all weekend before kickoff.
+- Focus Battle stages pregame starters deeper/closer to the front based on kickoff time; D/ST remains in defending territory.
+- Reduced focused Hero size and forced the Hero layer above battle lines, swords, map labels, and battlefield effects.
