@@ -1,0 +1,48 @@
+name: Official Week Closure Refresh
+
+on:
+  push:
+    branches:
+      - "fix/official-week-finalization"
+    paths:
+      - ".github/workflows/official-week-auto-commit.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: "fix/official-week-finalization"
+          fetch-depth: 0
+      - name: Add official closure refresh hook
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          marker='  // Final v8.16 public release identity.\n'
+          if marker not in s:
+              raise SystemExit('release marker not found')
+          payload='ICAvLyBQcm9tb3RlIHByb3Zpc2lvbmFsIGRhdGEgdG8gb2ZmaWNpYWwgc3RhdGUgYXMgc29vbiBhcyB0aGUgZ2F0ZSBvcGVucy4KICAvLyBUaGlzIGFsc28gY292ZXJzIHRoZSBjb25zZXJ2YXRpdmUgZmFsbGJhY2sgd2hlcmUgU2xlZXBlciBhZHZhbmNlcyB0byB0aGUKICAvLyBuZXh0IHdlZWsgYmVmb3JlIEVTUE4gZmluYWwtc3RhdGUgY29uZmlybWF0aW9uIHdhcyBhdmFpbGFibGUuCiAgbGV0IG9mZmljaWFsVWlUaHJvdWdoVjgxOT0wOwogIGZ1bmN0aW9uIGFwcGx5T2ZmaWNpYWxDbG9zdXJlVjgxOSgpewogICAgaWYoIXNsZWVwZXJEYXRhPy5jb25uZWN0ZWQpcmV0dXJuOwogICAgY29uc3QgY3VycmVudD1NYXRoLm1heCgxLE51bWJlcihzbGVlcGVyRGF0YT8uc3RhdGU/LndlZWt8fHJlc29sdmVkQ3VycmVudFNsZWVwZXJXZWVrPy4oKXx8Y3VycmVudFdlZWt8fDEpKTsKICAgIGNvbnN0IHNldHRsZWRUaHJvdWdoPW9mZmljaWFsRmFudGFzeVdlZWtGaW5hbFY4MTkoY3VycmVudCk/Y3VycmVudDpNYXRoLm1heCgwLGN1cnJlbnQtMSk7CiAgICBpZihzZXR0bGVkVGhyb3VnaDw9b2ZmaWNpYWxVaVRocm91Z2hWODE5KXJldHVybjsKICAgIG9mZmljaWFsVWlUaHJvdWdoVjgxOT1zZXR0bGVkVGhyb3VnaDsKICAgIGlmKGFjdGl2ZVNlYXNvbklkIT09J3llYXIyJ3x8c2NyaXB0ZWRQbGF5YmFja0VuYWJsZWR8fGlzUGxheWluZylyZXR1cm47CiAgICB0cnl7CiAgICAgIHJlYnVpbGRTZWFzb24oKTsKICAgICAgcmVuZGVyU2Vhc29uU25hcHNob3QoTWF0aC5tYXgoMSxjdXJyZW50KSk7CiAgICAgIHJlbmRlckRpdmlzaW9uR3JpZD8uKCk7CiAgICAgIHJlbmRlclN0YW5kaW5ncz8uKGZhbHNlKTsKICAgICAgcmVuZGVyR21NYXRjaHVwcz8uKCk7CiAgICAgIGlmKGN1cnJlbnRTaXRlVmlldz09PSdzZWFzb24nKXJlbmRlclNlYXNvbkh1Yj8uKCk7CiAgICAgIGlmKGN1cnJlbnRTaXRlVmlldz09PSdjb25xdWVzdCcpewogICAgICAgIHJlbmRlckxpdmVCYXR0bGVGcm9udHM/Lih0cnVlKTsKICAgICAgICByZW5kZXJMZWFndWVQdWxzZVY4MDk/LigpOwogICAgICB9CiAgICB9Y2F0Y2goXyl7fQogIH0KCiAgY29uc3QgZmV0Y2hOZmxXYXRjaFY4MTlCYXNlPWZldGNoTmZsV2F0Y2hWNzk0OwogIGZldGNoTmZsV2F0Y2hWNzk0PWFzeW5jIGZ1bmN0aW9uKCl7CiAgICBjb25zdCByZXN1bHQ9YXdhaXQgZmV0Y2hOZmxXYXRjaFY4MTlCYXNlLmFwcGx5KHRoaXMsYXJndW1lbnRzKTsKICAgIGFwcGx5T2ZmaWNpYWxDbG9zdXJlVjgxOSgpOwogICAgcmV0dXJuIHJlc3VsdDsKICB9OwoKICBjb25zdCBmYXN0U2xlZXBlclBvbGxWODE5QmFzZT1mYXN0U2xlZXBlclBvbGxWODE0OwogIGZhc3RTbGVlcGVyUG9sbFY4MTQ9YXN5bmMgZnVuY3Rpb24oKXsKICAgIGNvbnN0IHJlc3VsdD1hd2FpdCBmYXN0U2xlZXBlclBvbGxWODE5QmFzZS5hcHBseSh0aGlzLGFyZ3VtZW50cyk7CiAgICBhcHBseU9mZmljaWFsQ2xvc3VyZVY4MTkoKTsKICAgIHJldHVybiByZXN1bHQ7CiAgfTsKICBzbGVlcGVyUmVmcmVzaEN1cnJlbnRXZWVrPWZhc3RTbGVlcGVyUG9sbFY4MTQ7Cgo='
+          patch=base64.b64decode(payload).decode('utf-8')
+          if 'Promote provisional data to official state as soon as the gate opens.' not in s:
+              s=s.replace(marker,patch+marker,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Remove one-shot workflow
+        shell: bash
+        run: rm .github/workflows/official-week-auto-commit.yml
+      - name: Commit refresh hook
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Refresh official league state when fantasy week closes"
+          git push origin HEAD:fix/official-week-finalization
