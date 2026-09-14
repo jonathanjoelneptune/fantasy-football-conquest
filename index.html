@@ -15023,6 +15023,24 @@ rebuildBaseRasterV815=async function(){
   };
   sleeperRefreshCurrentWeek=fastSleeperPollV814;
 
+  // Make every matchup surface consume the same official-week gate.
+  const seasonBigBoardGroupsV819Base=seasonBigBoardGroups;
+  seasonBigBoardGroups=function(seasonId,week){
+    const groups=seasonBigBoardGroupsV819Base.apply(this,arguments),w=Math.max(1,Number(week||1));
+    const rec=seasonRegistry?.[seasonId];
+    if(rec?.provider==='sleeper'&&sleeperData?.connected){
+      const settled=officialFantasyWeekFinalV819(w);
+      return (groups||[]).map(g=>({...g,final:settled}));
+    }
+    return groups;
+  };
+
+  const warStateV819Base=warStateV793;
+  warStateV793=function(g){
+    if(g?.final)return 'Final';
+    return warStateV819Base.apply(this,arguments);
+  };
+
   // Final v8.16 public release identity.
   const collectSiteDefaultsV816Base=collectSiteDefaults;
   collectSiteDefaults=function(){const p=collectSiteDefaultsV816Base();p.siteVersion='8.19';return p;};
