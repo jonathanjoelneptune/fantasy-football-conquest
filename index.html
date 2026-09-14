@@ -14162,7 +14162,7 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
   const fetchNflWatchV811Base=fetchNflWatchV794;
   fetchNflWatchV794=async function(...args){const r=await fetchNflWatchV811Base.apply(this,args);queueBattleHeroesV811(false);return r;};
   const collectSiteDefaultsV811Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV811Base();p.siteVersion='8.16';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV811Base();p.siteVersion='8.18';return p;};
   setTimeout(()=>{ensureBattleHeroLayerV811();queueBattleHeroesV811(true);},900);
 
 
@@ -14328,7 +14328,7 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
   renderLiveBattleFronts=function(...args){const r=renderLiveBattleFrontsV812Base.apply(this,args);requestAnimationFrame(()=>{bringHeroLayerToFrontV812();queueBattleHeroesV811(true);});return r;};
 
   const collectSiteDefaultsV812Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV812Base();p.siteVersion='8.16';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV812Base();p.siteVersion='8.18';return p;};
   setTimeout(()=>{decoratePlayerOwnershipPillsV812();bringHeroLayerToFrontV812();queueBattleHeroesV811(true);},1000);
 
 
@@ -14460,7 +14460,7 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
   applyBattleFocusVisualsV810=function(){const r=applyBattleFocusVisualsV813Base.apply(this,arguments);restoreDynamicLayerOrderV813();return r;};
 
   const collectSiteDefaultsV813Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV813Base();p.siteVersion='8.16';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV813Base();p.siteVersion='8.18';return p;};
   setTimeout(()=>{stabilizeBaseStageV813();restoreDynamicLayerOrderV813();renderLeaguePulseV809();queueBattleHeroesV811?.(true);},1100);
 
 
@@ -14640,7 +14640,7 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
   setTimeout(()=>{moveDynamicLayersToOverlayV814();restoreDynamicLayerOrderV813();renderLiveBattleFronts(true);},700);
 
   const collectSiteDefaultsV814Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV814Base();p.siteVersion='8.16';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV814Base();p.siteVersion='8.18';return p;};
 
 
 
@@ -14823,7 +14823,7 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
 
   // Use the same public release identity everywhere the portable defaults are
   // exported from this build.
-  const collectSiteDefaultsV815Base=collectSiteDefaults;collectSiteDefaults=function(){const p=collectSiteDefaultsV815Base();p.siteVersion='8.16';return p;};
+  const collectSiteDefaultsV815Base=collectSiteDefaults;collectSiteDefaults=function(){const p=collectSiteDefaultsV815Base();p.siteVersion='8.18';return p;};
   setTimeout(()=>{hardenStaticWorldV815();installBaseObserversV815();rebuildBaseRasterV815(true);},950);
 
 
@@ -14897,9 +14897,23 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
     document.querySelectorAll('.pulsePlaysWrapV816.plays-open').forEach(x=>x.classList.remove('plays-open'));
   },{passive:true});
 
+  // v8.18 — Big Board startup responsiveness hotfix -------------------------
+// The v8.15 cache builder deep-clones and serializes the full 10+ MB SVG on
+// the browser main thread. On first Conquest/Big Board entry that work lands
+// at the same time as all six matchup/live layers and can hard-freeze input.
+// Keep the stable SVG + detached interaction layer, but suspend automatic
+// raster rebuilds until the cache pipeline is redesigned off the critical path.
+try{document.querySelector('.mapcard')?.classList.remove('raster-ready-v815');}catch(_){}
+scheduleBaseRasterV815=function(){
+  try{clearTimeout(HARDEN_V815.rasterTimer);HARDEN_V815.rasterTimer=0;HARDEN_V815.rasterDirty=false;}catch(_){}
+};
+rebuildBaseRasterV815=async function(){
+  try{clearTimeout(HARDEN_V815.rasterTimer);HARDEN_V815.rasterTimer=0;HARDEN_V815.rasterDirty=false;HARDEN_V815.rasterBusy=false;document.querySelector('.mapcard')?.classList.remove('raster-ready-v815');}catch(_){}
+};
+
   // Final v8.16 public release identity.
   const collectSiteDefaultsV816Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV816Base();p.siteVersion='8.16';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV816Base();p.siteVersion='8.18';return p;};
   setTimeout(()=>{try{renderLeaguePulseV809();scheduleBaseRasterV815(80);}catch(_){}},1200);
 
 
