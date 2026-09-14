@@ -3,9 +3,9 @@ name: Big Board Raster Freeze Hotfix
 on:
   push:
     branches:
-      - fix/bigboard-raster-freeze
+      - "fix/bigboard-raster-freeze"
     paths:
-      - .github/workflows/bigboard-raster-hotfix.yml
+      - ".github/workflows/bigboard-raster-hotfix.yml"
 
 permissions:
   contents: write
@@ -16,39 +16,43 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: fix/bigboard-raster-freeze
+          ref: "fix/bigboard-raster-freeze"
           fetch-depth: 0
       - name: Patch Big Board startup raster path
-        shell: python
+        shell: bash
         run: |
+          python - <<'PY'
           from pathlib import Path
-          p = Path('index.html')
-          s = p.read_text(encoding='utf-8')
+          p = Path("index.html")
+          s = p.read_text(encoding="utf-8")
           marker = "  // Final v8.16 public release identity.\n"
           if marker not in s:
-              raise SystemExit('v8.16 marker not found')
-          hotfix = r'''  // v8.18 — Big Board startup responsiveness hotfix -------------------------
-  // The v8.15 cache builder deep-clones and serializes the full 10+ MB SVG on
-  // the browser main thread. On first Conquest/Big Board entry that work lands
-  // at the same time as all six matchup/live layers and can hard-freeze input.
-  // Keep the stable SVG + detached interaction layer, but suspend automatic
-  // raster rebuilds until the cache pipeline is redesigned off the critical path.
-  try{document.querySelector('.mapcard')?.classList.remove('raster-ready-v815');}catch(_){}
-  scheduleBaseRasterV815=function(){
-    try{clearTimeout(HARDEN_V815.rasterTimer);HARDEN_V815.rasterTimer=0;HARDEN_V815.rasterDirty=false;}catch(_){}
-  };
-  rebuildBaseRasterV815=async function(){
-    try{clearTimeout(HARDEN_V815.rasterTimer);HARDEN_V815.rasterTimer=0;HARDEN_V815.rasterDirty=false;HARDEN_V815.rasterBusy=false;document.querySelector('.mapcard')?.classList.remove('raster-ready-v815');}catch(_){}
-  };
+              raise SystemExit("v8.16 marker not found")
+          hotfix = """  // v8.18 — Big Board startup responsiveness hotfix -------------------------
+          // The v8.15 cache builder deep-clones and serializes the full 10+ MB SVG on
+          // the browser main thread. On first Conquest/Big Board entry that work lands
+          // at the same time as all six matchup/live layers and can hard-freeze input.
+          // Keep the stable SVG + detached interaction layer, but suspend automatic
+          // raster rebuilds until the cache pipeline is redesigned off the critical path.
+          try{document.querySelector('.mapcard')?.classList.remove('raster-ready-v815');}catch(_){}
+          scheduleBaseRasterV815=function(){
+            try{clearTimeout(HARDEN_V815.rasterTimer);HARDEN_V815.rasterTimer=0;HARDEN_V815.rasterDirty=false;}catch(_){}
+          };
+          rebuildBaseRasterV815=async function(){
+            try{clearTimeout(HARDEN_V815.rasterTimer);HARDEN_V815.rasterTimer=0;HARDEN_V815.rasterDirty=false;HARDEN_V815.rasterBusy=false;document.querySelector('.mapcard')?.classList.remove('raster-ready-v815');}catch(_){}
+          };
 
-'''
-          if 'v8.18 — Big Board startup responsiveness hotfix' not in s:
+          """
+          if "v8.18 — Big Board startup responsiveness hotfix" not in s:
               s = s.replace(marker, hotfix + marker, 1)
           s = s.replace("p.siteVersion='8.16'", "p.siteVersion='8.18'")
-          p.write_text(s, encoding='utf-8')
+          p.write_text(s, encoding="utf-8")
+          PY
       - name: Remove one-shot workflow
+        shell: bash
         run: rm .github/workflows/bigboard-raster-hotfix.yml
       - name: Commit hotfix
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
