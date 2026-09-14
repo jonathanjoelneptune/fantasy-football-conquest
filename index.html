@@ -14983,6 +14983,46 @@ rebuildBaseRasterV815=async function(){
     return standingsFromV819Base.call(this,gated,throughWeek);
   };
 
+  // Promote provisional data to official state as soon as the gate opens.
+  // This also covers the conservative fallback where Sleeper advances to the
+  // next week before ESPN final-state confirmation was available.
+  let officialUiThroughV819=0;
+  function applyOfficialClosureV819(){
+    if(!sleeperData?.connected)return;
+    const current=Math.max(1,Number(sleeperData?.state?.week||resolvedCurrentSleeperWeek?.()||currentWeek||1));
+    const settledThrough=officialFantasyWeekFinalV819(current)?current:Math.max(0,current-1);
+    if(settledThrough<=officialUiThroughV819)return;
+    officialUiThroughV819=settledThrough;
+    if(activeSeasonId!=='year2'||scriptedPlaybackEnabled||isPlaying)return;
+    try{
+      rebuildSeason();
+      renderSeasonSnapshot(Math.max(1,current));
+      renderDivisionGrid?.();
+      renderStandings?.(false);
+      renderGmMatchups?.();
+      if(currentSiteView==='season')renderSeasonHub?.();
+      if(currentSiteView==='conquest'){
+        renderLiveBattleFronts?.(true);
+        renderLeaguePulseV809?.();
+      }
+    }catch(_){}
+  }
+
+  const fetchNflWatchV819Base=fetchNflWatchV794;
+  fetchNflWatchV794=async function(){
+    const result=await fetchNflWatchV819Base.apply(this,arguments);
+    applyOfficialClosureV819();
+    return result;
+  };
+
+  const fastSleeperPollV819Base=fastSleeperPollV814;
+  fastSleeperPollV814=async function(){
+    const result=await fastSleeperPollV819Base.apply(this,arguments);
+    applyOfficialClosureV819();
+    return result;
+  };
+  sleeperRefreshCurrentWeek=fastSleeperPollV814;
+
   // Final v8.16 public release identity.
   const collectSiteDefaultsV816Base=collectSiteDefaults;
   collectSiteDefaults=function(){const p=collectSiteDefaultsV816Base();p.siteVersion='8.19';return p;};
