@@ -14162,7 +14162,7 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
   const fetchNflWatchV811Base=fetchNflWatchV794;
   fetchNflWatchV794=async function(...args){const r=await fetchNflWatchV811Base.apply(this,args);queueBattleHeroesV811(false);return r;};
   const collectSiteDefaultsV811Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV811Base();p.siteVersion='8.18';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV811Base();p.siteVersion='8.19';return p;};
   setTimeout(()=>{ensureBattleHeroLayerV811();queueBattleHeroesV811(true);},900);
 
 
@@ -14328,7 +14328,7 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
   renderLiveBattleFronts=function(...args){const r=renderLiveBattleFrontsV812Base.apply(this,args);requestAnimationFrame(()=>{bringHeroLayerToFrontV812();queueBattleHeroesV811(true);});return r;};
 
   const collectSiteDefaultsV812Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV812Base();p.siteVersion='8.18';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV812Base();p.siteVersion='8.19';return p;};
   setTimeout(()=>{decoratePlayerOwnershipPillsV812();bringHeroLayerToFrontV812();queueBattleHeroesV811(true);},1000);
 
 
@@ -14460,7 +14460,7 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
   applyBattleFocusVisualsV810=function(){const r=applyBattleFocusVisualsV813Base.apply(this,arguments);restoreDynamicLayerOrderV813();return r;};
 
   const collectSiteDefaultsV813Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV813Base();p.siteVersion='8.18';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV813Base();p.siteVersion='8.19';return p;};
   setTimeout(()=>{stabilizeBaseStageV813();restoreDynamicLayerOrderV813();renderLeaguePulseV809();queueBattleHeroesV811?.(true);},1100);
 
 
@@ -14640,7 +14640,7 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
   setTimeout(()=>{moveDynamicLayersToOverlayV814();restoreDynamicLayerOrderV813();renderLiveBattleFronts(true);},700);
 
   const collectSiteDefaultsV814Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV814Base();p.siteVersion='8.18';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV814Base();p.siteVersion='8.19';return p;};
 
 
 
@@ -14823,7 +14823,7 @@ html[data-theme="light"] .pulsePlayBodyV816 strong{color:#17243a}
 
   // Use the same public release identity everywhere the portable defaults are
   // exported from this build.
-  const collectSiteDefaultsV815Base=collectSiteDefaults;collectSiteDefaults=function(){const p=collectSiteDefaultsV815Base();p.siteVersion='8.18';return p;};
+  const collectSiteDefaultsV815Base=collectSiteDefaults;collectSiteDefaults=function(){const p=collectSiteDefaultsV815Base();p.siteVersion='8.19';return p;};
   setTimeout(()=>{hardenStaticWorldV815();installBaseObserversV815();rebuildBaseRasterV815(true);},950);
 
 
@@ -14911,9 +14911,81 @@ rebuildBaseRasterV815=async function(){
   try{clearTimeout(HARDEN_V815.rasterTimer);HARDEN_V815.rasterTimer=0;HARDEN_V815.rasterDirty=false;HARDEN_V815.rasterBusy=false;document.querySelector('.mapcard')?.classList.remove('raster-ready-v815');}catch(_){}
 };
 
+  // v8.19 — official fantasy-week finalization gate --------------------------
+  // Live scores, projections, player states, and battle fronts may update all
+  // weekend. Official league state does not settle until the last Monday NFL
+  // game is FINAL. Until then: no W/L, PF/PA standings movement, All-Play,
+  // conquest ownership/soldier advancement, or other completed-week analytics.
+  function officialFantasyWeekFinalV819(week){
+    const w=Math.max(1,Number(week||1));
+    const current=Math.max(1,Number(sleeperData?.state?.week||resolvedCurrentSleeperWeek?.()||currentWeek||1));
+    const seasonType=String(sleeperData?.state?.season_type||'regular').toLowerCase();
+    if(seasonType==='post'||String(sleeperData?.league?.status||'').toLowerCase()==='complete')return true;
+    if(w<current)return true;
+    if(w>current)return false;
+
+    // Fail closed for the active week. We only settle it early when it is
+    // Monday in the NFL's Eastern-time operating day and the live ESPN slate
+    // confirms every Monday game for this NFL week is post/final.
+    let weekday='';
+    try{weekday=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short'}).format(new Date());}catch(_){weekday=new Date().getDay()===1?'Mon':'';}
+    if(weekday!=='Mon'||nflWatchStateV794?.source!=='live')return false;
+    const rows=(nflWatchStateV794?.events||[]).filter(e=>!Number(e?.week||0)||Number(e.week)===w);
+    if(!rows.length)return false;
+    return rows.every(e=>String(e?.state||'').toLowerCase()==='post');
+  }
+
+  // The imported Sleeper season is the source used by conquest history and
+  // permanent map state. Keep the active week provisional until the gate opens.
+  const sleeperBuildImportedWeekV819Base=sleeperBuildImportedWeek;
+  sleeperBuildImportedWeek=function(week,rows){
+    const games=sleeperBuildImportedWeekV819Base.apply(this,arguments),settled=officialFantasyWeekFinalV819(week);
+    return games.map(m=>{
+      if(settled){
+        const sa=Number(m.sa||0),sb=Number(m.sb||0),winner=sa===sb?null:(sa>sb?m.a:m.b);
+        return {...m,final:true,winner,loser:winner?(winner===m.a?m.b:m.a):null};
+      }
+      return {...m,final:false,winner:null,loser:null};
+    });
+  };
+
+  // hubSeasonSource previously called the current week final as soon as either
+  // fantasy team had points. Normalize that output to the same authoritative
+  // week gate so standings/All-Play/awards cannot consume a partial week.
+  const hubSeasonSourceV819Base=hubSeasonSource;
+  hubSeasonSource=function(seasonId=activeSeasonId){
+    const src=hubSeasonSourceV819Base.apply(this,arguments),rec=src?.rec;
+    if(rec?.provider==='sleeper'&&seasonId===activeSeasonId&&sleeperData?.connected&&src?.season?.reg){
+      const current=Math.max(1,Number(sleeperData?.state?.week||resolvedCurrentSleeperWeek?.()||currentWeek||1));
+      const games=src.season.reg[current]||[],settled=officialFantasyWeekFinalV819(current);
+      src.season.reg[current]=games.map(m=>{
+        if(settled){
+          const sa=Number(m.sa||0),sb=Number(m.sb||0),winner=sa===sb?null:(sa>sb?m.a:m.b);
+          return {...m,final:true,winner,loser:winner?(winner===m.a?m.b:m.a):null};
+        }
+        return {...m,final:false,winner:null,loser:null};
+      });
+    }
+    return src;
+  };
+
+  // standingsFrom historically counted PF/PA for every supplied matchup even
+  // when it was unfinished. Filter explicitly-provisional games before the
+  // legacy standings engine sees them. Undefined final remains compatible with
+  // older historical/scripted seasons; only final:false is excluded.
+  const standingsFromV819Base=standingsFrom;
+  standingsFrom=function(regWeeks,throughWeek=14){
+    const gated=[];
+    for(let w=0;w<=Math.max(17,Number(throughWeek||0));w++){
+      const rows=regWeeks?.[w];
+      gated[w]=Array.isArray(rows)?rows.filter(m=>m?.final!==false):rows;
+    }
+    return standingsFromV819Base.call(this,gated,throughWeek);
+  };
+
   // Final v8.16 public release identity.
   const collectSiteDefaultsV816Base=collectSiteDefaults;
-  collectSiteDefaults=function(){const p=collectSiteDefaultsV816Base();p.siteVersion='8.18';return p;};
+  collectSiteDefaults=function(){const p=collectSiteDefaultsV816Base();p.siteVersion='8.19';return p;};
   setTimeout(()=>{try{renderLeaguePulseV809();scheduleBaseRasterV815(80);}catch(_){}},1200);
 
 
