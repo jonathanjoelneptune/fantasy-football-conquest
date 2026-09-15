@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const q=(s,r=document)=>r.querySelector(s),qa=(s,r=document)=>[...r.querySelectorAll(s)],norm=s=>String(s||'').replace(/[’‘]/g,"'").replace(/\s+/g,' ').trim();
 const week=Number(new URLSearchParams(location.search).get('week')||1);if(week!==1)return;
-const palette={"Hercules Unchained":"#a91418","Aries It Out":"#1688a7","The Peasants of Troy":"#b95a00","Winging It":"#b3a600","🏺Hades Nutz":"#625d54","TroyisBetterthanOdyssey":"#b900a9","Winged Victory Formation":"#23672d","The Beer of Olympus":"#5e7c2a","Apollo's Archers":"#0879a8","Flight of JarYES":"#6820a5","BeginnersRuck":"#698c2b","Uranus Colonizer":"#43271f"};
+const palette={"Hercules Unchained":"#e30613","🏺Hades Nutz":"#7a7a7a","The Peasants of Troy":"#ff8700","Winging It":"#f1ff00","TroyisBetterthanOdyssey":"#f000e8","Aries It Out":"#13bfdf","Apollo's Archers":"#1263bd","Winged Victory Formation":"#087b32","BeginnersRuck":"#7180a4","The Beer of Olympus":"#7dca36","Uranus Colonizer":"#633632","Flight of JarYES":"#7414df"};
 const owners={
  'Caleb Williams':{team:"Apollo's Archers",manager:'Mike Quintero'},
  'Josh Allen':{team:'🏺Hades Nutz',manager:'Bernard Laguerre'},
