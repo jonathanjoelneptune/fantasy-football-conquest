@@ -1,0 +1,1 @@
+window.OLYMPUS_CHRONICLE_SNAPSHOTS={1:{territoryCounts:{"Hercules Unchained":7,"The Peasants of Troy":7,"🏺Hades Nutz":7,"Winged Victory Formation":7,"Apollo's Archers":7,"BeginnersRuck":7,"Aries It Out":5,"Winging It":5,"TroyisBetterthanOdyssey":5,"The Beer of Olympus":5,"Flight of JarYES":5,"Uranus Colonizer":5}}};
