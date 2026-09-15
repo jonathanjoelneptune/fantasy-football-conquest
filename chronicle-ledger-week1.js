@@ -11,24 +11,26 @@ const transfers=[
   ['Moirai Loom','Uranus Colonizer','BeginnersRuck']
 ];
 const norm=s=>String(s||'').replace(/\s+/g,' ').trim();
+const key=s=>norm(s).toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9']/g,'');
 const ledger=document.querySelector('#ledger');
 if(!ledger)return;
 function cards(){return [...ledger.querySelectorAll('.territoryCard')].filter(c=>c.querySelector('h3')&&c.querySelector('.territoryNames'));}
-function cardFor(team,cs){return cs.find(c=>norm(c.querySelector('h3')?.textContent)===team);}
+function cardFor(team,cs){const want=key(team);return cs.find(c=>{const got=key(c.querySelector('h3')?.textContent);return got===want||got.endsWith(want)||want.endsWith(got);});}
 function names(c){return [...c.querySelectorAll('.territoryNames span')];}
+function territoryMatch(el,territory){const got=key(el.textContent),want=key(territory);return got===want||got.endsWith(want);}
 function applyOnce(){
   const cs=cards();
   if(cs.length!==12)return false;
   for(const [territory,loser,winner] of transfers){
     const lc=cardFor(loser,cs),wc=cardFor(winner,cs);
     if(!lc||!wc)return false;
-    names(lc).filter(el=>norm(el.textContent)===territory).forEach(el=>el.remove());
-    const existing=names(wc).filter(el=>norm(el.textContent)===territory);
+    names(lc).filter(el=>territoryMatch(el,territory)).forEach(el=>el.remove());
+    const existing=names(wc).filter(el=>territoryMatch(el,territory));
     if(!existing.length){const span=document.createElement('span');span.textContent=territory;wc.querySelector('.territoryNames').appendChild(span);}
     else existing.slice(1).forEach(el=>el.remove());
   }
   cs.forEach(c=>{const n=names(c).length;c.querySelector('.count').textContent=`${n} ${n===1?'territory':'territories'}`;});
-  const all=cs.flatMap(names).map(el=>norm(el.textContent));
+  const all=cs.flatMap(names).map(el=>key(el.textContent));
   const counts=cs.map(c=>names(c).length);
   const valid=all.length===72&&new Set(all).size===72&&counts.filter(n=>n===7).length===6&&counts.filter(n=>n===5).length===6;
   if(valid)console.info('Week 1 Chronicle ledger verified: 72 unique territories, 7/5 ownership split.');
