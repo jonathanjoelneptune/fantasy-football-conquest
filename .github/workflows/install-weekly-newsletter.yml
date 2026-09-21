@@ -27,7 +27,9 @@ jobs:
               if old not in s:
                   raise SystemExit("Season tab anchor not found")
               s=s.replace(old,new,1)
-          tag='<script src="./weekly-newsletter.js?v=1"></script>'
+          import re
+          tag='<script src="./weekly-newsletter.js?v=3"></script>'
+          s=re.sub(r'<script src="\\./weekly-newsletter\\.js\\?v=[^"]+"></script>',tag,s)
           if tag not in s:
               s=s.replace('</body>',tag+'\n</body>',1)
           p.write_text(s,encoding="utf-8")
