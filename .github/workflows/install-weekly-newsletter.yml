@@ -1,9 +1,10 @@
-name: Integrate Weekly Newsletter
+name: Install Weekly Newsletter Tab
 on:
   workflow_dispatch:
   push:
     paths:
       - weekly-newsletter-inline.js
+      - newsletter-integrate.py
       - .github/workflows/install-weekly-newsletter.yml
 permissions:
   contents: write
@@ -12,57 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Integrate newsletter inside main application
-        shell: python
-        run: |
-          from pathlib import Path
-          import re
-
-          page = Path("index.html")
-          source = Path("weekly-newsletter-inline.js")
-          s = page.read_text(encoding="utf-8")
-          inline = source.read_text(encoding="utf-8").rstrip()
-
-          # Ensure the Newsletter tab exists directly left of Weekly Honors.
-          if 'data-season-hub-tab="newsletter"' not in s:
-              old = '''<button class="screenTab active" data-season-hub-tab="bigboard" type="button">Matchups</button>
-        <button class="screenTab" data-season-hub-tab="week" type="button">Weekly Honors</button>'''
-              new = '''<button class="screenTab active" data-season-hub-tab="bigboard" type="button">Matchups</button>
-        <button class="screenTab" data-season-hub-tab="newsletter" type="button">Weekly Newsletter</button>
-        <button class="screenTab" data-season-hub-tab="week" type="button">Weekly Honors</button>'''
-              if old not in s:
-                  raise SystemExit("Season Center tab anchor not found")
-              s = s.replace(old, new, 1)
-
-          # External scripts cannot access the private renderSeasonHub /
-          # seasonHubTab bindings because the main application is inside an
-          # IIFE. Remove the old external shims entirely.
-          s = re.sub(r'\n*<script src="\./weekly-newsletter\.js\?v=\d+"></script>', '', s)
-
-          start = '  // WEEKLY_NEWSLETTER_V820_START'
-          end = '  // WEEKLY_NEWSLETTER_V820_END'
-          if start in s and end in s:
-              a = s.index(start)
-              b = s.index(end, a) + len(end)
-              s = s[:a] + inline + s[b:]
-          else:
-              anchor = '    loadSeasonRegistry();loadDynastyRegistry();loadChronicleAwards();'
-              if anchor not in s:
-                  raise SystemExit("Main application initialization anchor not found")
-              s = s.replace(anchor, inline + '\n\n' + anchor, 1)
-
-          s = s.replace("p.siteVersion='8.19'", "p.siteVersion='8.20'")
-
-          # Sanity checks: one tab, one internal route, zero legacy shims.
-          if s.count('data-season-hub-tab="newsletter"') != 1:
-              raise SystemExit("Expected exactly one Weekly Newsletter tab")
-          if s.count('WEEKLY_NEWSLETTER_V820_START') != 1:
-              raise SystemExit("Expected exactly one internal newsletter route")
-          if 'weekly-newsletter.js?' in s:
-              raise SystemExit("Legacy external newsletter shim still present")
-
-          page.write_text(s, encoding="utf-8")
-      - name: Commit integrated newsletter
+      - name: Patch Big Board
+        run: python newsletter-integrate.py
+      - name: Commit installed newsletter
         run: |
           if git diff --quiet; then exit 0; fi
           git config user.name "github-actions[bot]"
