@@ -1,5 +1,5 @@
 (()=>{
-  const priorRender=renderSeasonHub;
+  let priorRender=renderSeasonHub;
   const esc=s=>escapeHtml(String(s??''));
   const med=a=>{a=[...a].sort((x,y)=>x-y);return a.length?(a.length%2?a[(a.length-1)/2]:(a[a.length/2-1]+a[a.length/2])/2):0};
   const opts=(latest,week)=>Array.from({length:Math.max(1,latest)},(_,i)=>i+1).map(w=>'<option value="'+w+'" '+(w===week?'selected':'')+'>Week '+w+'</option>').join('');
@@ -19,5 +19,29 @@
     const body='<header class="newsletterHero"><div class="newsletterKicker">The League of Olympus · Week '+week+'</div><div class="newsletterTitle">The Chronicle of Week '+week+'</div><div class="newsletterDeck">The battles, heroes, heartbreaks, and numbers that shaped this chapter of the conquest.</div></header><div class="newsletterStats"><div class="newsletterStat"><b>'+games.length+'</b><span>Battles</span></div><div class="newsletterStat"><b>'+hubFmt(avg,1)+'</b><span>Average Score</span></div><div class="newsletterStat"><b>'+hubFmt(median,1)+'</b><span>Median Score</span></div><div class="newsletterStat"><b>'+esc(topName)+'</b><span>High King · '+(top?hubFmt(top.score,1):'—')+'</span></div></div><section class="newsletterSection"><div class="newsletterSectionTitle">The Chronicle</div><div class="newsletterStory">'+esc(story+' The first territories of the week were decided here, and the road up Mount Olympus changed with every result.')+'</div></section><section class="newsletterSection"><div class="newsletterSectionTitle">The Six Battles</div><div class="newsletterBattles">'+(battles||'<div class="hubEmpty">Week '+week+' data has not arrived yet.</div>')+'</div></section><section class="newsletterSection"><section class="newsletterSection">'+hubWeekAllPlayTable(src,week)+'</section><div class="newsletterSource">Generated from '+esc(String(rec.provider).toUpperCase())+' league data · '+esc(rec.nflSeason)+' · Week '+week+'</div>';
     picker(content,latest,week,body);
   }
-  renderSeasonHub=function(){if(seasonHubTab==='newsletter')return renderWeeklyNewsletter();return priorRender()};
+  function installNewsletterRouter(){
+    if(window.__weeklyNewsletterRouterInstalled)return;
+    window.__weeklyNewsletterRouterInstalled=true;
+    const wrapCurrent=()=>{
+      const current=renderSeasonHub;
+      if(current&&current!==window.__weeklyNewsletterRouter){
+        priorRender=current;
+        const router=function(){if(seasonHubTab==='newsletter')return renderWeeklyNewsletter();return priorRender.apply(this,arguments)};
+        window.__weeklyNewsletterRouter=router;
+        renderSeasonHub=router;
+      }
+    };
+    wrapCurrent();
+    // index.html has several later renderSeasonHub decorators. Re-wrap after
+    // startup so Newsletter remains a first-class route rather than falling
+    // through to whichever tab was previously rendered.
+    [0,50,250,1000,2500].forEach(ms=>setTimeout(wrapCurrent,ms));
+    document.getElementById('seasonHubTabs')?.addEventListener('click',e=>{
+      const btn=e.target.closest('[data-season-hub-tab]');
+      if(!btn||btn.dataset.seasonHubTab!=='newsletter')return;
+      seasonHubTab='newsletter';
+      requestAnimationFrame(()=>renderWeeklyNewsletter());
+    },true);
+  }
+  installNewsletterRouter();
 })();
