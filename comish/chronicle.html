@@ -60,7 +60,7 @@ document.getElementById('clearFormat').onclick=()=>{document.execCommand('remove
 e.addEventListener('paste',()=>setTimeout(()=>{e.innerHTML=sanitize(e.innerHTML);save()},0));
 w.onchange=()=>load();reload.onclick=()=>{const n=+w.value;localStorage.removeItem(htmlKey(n));localStorage.removeItem(oldKey(n));load(true)};
 preview.onclick=()=>{save();const n=+w.value;window.open('../weekly-recap.html?week='+n+'&draft=1&v='+Date.now()+'#chronicle','_blank')};
-publish.onclick=async()=>{save();const n=+w.value,html=cleanHtml();try{await navigator.clipboard.writeText(html)}catch(_){}const exists=fileState.dataset.exists==='1';const base='https://github.com/jonathanjoelneptune/fantasy-football-conquest/';const url=exists?base+'edit/main/chronicles/'+htmlPath(n):base+'new/main/chronicles?filename='+encodeURIComponent(htmlPath(n));s.textContent='Week '+n+' HTML copied. GitHub is opening; paste it into the file and commit.';window.open(url,'_blank')};
+publish.onclick=async()=>{save();const n=+w.value,html=cleanHtml();try{await navigator.clipboard.writeText(html)}catch(_){}const exists=fileState.dataset.exists==='1',base='https://github.com/jonathanjoelneptune/fantasy-football-conquest/';let url;if(exists){url=base+'edit/main/chronicles/'+htmlPath(n);s.textContent='Week '+n+' HTML copied. GitHub is opening the existing file; paste the updated HTML and commit.'}else{url=base+'new/main?filename='+encodeURIComponent('chronicles/'+htmlPath(n))+'&value='+encodeURIComponent(html);s.textContent='Week '+n+' is opening in GitHub with the filename and Chronicle prefilled. Review it and click Commit changes.'}window.open(url,'_blank')};
 load();
 </script>
 </body></html>
