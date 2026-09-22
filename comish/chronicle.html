@@ -22,7 +22,7 @@
 <button type="button" id="reload">Reload committed</button>
 <button type="button" id="clear" class="bad">Clear local draft</button>
 <a id="previewLink" class="btn" target="_blank" rel="noopener">Full newsletter preview ↗</a>
-<button type="button" id="publishBtn">Publish to GitHub</button>
+<a id="publishLink" class="btn" target="_blank" rel="noopener">Publish to GitHub ↗</a>
 <span id="fileState" class="badge">Starting…</span>
 </div>
 <p id="status" class="status">Starting publisher…</p>
@@ -55,7 +55,7 @@ var preview=document.getElementById('preview');
 var frame=document.getElementById('newsletterFrame');
 var openPreview=document.getElementById('openPreview');
 var previewLink=document.getElementById('previewLink');
-var publishBtn=document.getElementById('publishBtn');
+var publishLink=document.getElementById('publishLink');
 var committedExists=false;
 
 for(var i=1;i<=18;i++){var o=document.createElement('option');o.value=String(i);o.textContent='Week '+i;week.appendChild(o);}
@@ -97,11 +97,11 @@ function renderMarkdown(md){
 }
 function updateLinks(){
   var n=Number(week.value);
-  var previewUrl='../weekly-recap.html?week='+n+'&draft=1&v='+Date.now()+'#chronicle';
+  var previewUrl='../weekly-recap.html?week='+n+'&draft=1&v='+Date.now()+'#chronicle~'+encodeURIComponent(source.value);
   previewLink.href=previewUrl;
   openPreview.href=previewUrl;
   var base='https://github.com/jonathanjoelneptune/fantasy-football-conquest/';
-  publishBtn.dataset.url=committedExists
+  publishLink.href=committedExists
     ?base+'edit/main/chronicles/'+fileName(n)
     :base+'new/main/chronicles?filename='+encodeURIComponent(fileName(n));
 }
@@ -175,16 +175,14 @@ function copyMarkdown(md){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(md).catch(function(){});
   return ok;
 }
-publishBtn.addEventListener('click',function(){
+publishLink.addEventListener('click',function(){
   syncDraft();
   updateLinks();
-  var n=Number(week.value),md=source.value,url=publishBtn.dataset.url;
+  var n=Number(week.value),md=source.value;
   var copied=copyMarkdown(md);
   status.textContent=copied
     ?'Week '+n+' Markdown copied. GitHub is opening now. Paste once, then Commit changes.'
     :'GitHub is opening now. If paste is empty, return here and copy the Chronicle source manually.';
-  var tab=window.open(url,'_blank');
-  if(!tab)location.href=url;
 });
 loadWeek(false).catch(function(err){console.error(err);fileState.textContent='Load error';status.textContent='Publisher error: '+String(err&&err.message||err);});
 })();
