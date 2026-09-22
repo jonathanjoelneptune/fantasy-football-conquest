@@ -1,1 +1,66 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>League of Olympus • Chronicle Publisher</title><style>body{margin:0;background:#0a1220;color:#f7e8bf;font:16px system-ui}.wrap{max-width:1000px;margin:auto;padding:28px}.card{background:#101d31;border:1px solid #8b6a2e;border-radius:14px;padding:20px;margin:16px 0}h1{color:#f4d486}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}label{font-weight:800}select,button,a.btn{background:#c99a3d;color:#08101c;border:0;border-radius:9px;padding:12px 16px;font-weight:800;text-decoration:none}select{background:#f7e8bf}textarea{width:100%;min-height:60vh;box-sizing:border-box;background:#07101d;color:#fff;border:1px solid #786337;border-radius:10px;padding:16px;font:15px/1.55 ui-monospace,monospace}.status{opacity:.85}.hint{font-size:14px;opacity:.8}</style></head><body><main class="wrap"><h1>Chronicle Publisher</h1><p>Choose a week, write or revise its Chronicle, preview that week's newsletter, then publish the canonical Markdown to GitHub.</p><div class="card"><div class="row"><label for="week">Week</label><select id="week"></select><button id="reload">Reload committed</button><button id="copy">Copy draft</button><a class="btn" id="publish" target="_blank" rel="noopener">Publish in GitHub</a><a class="btn" id="preview">Preview newsletter</a></div><p class="status" id="status">Loading Chronicle…</p><textarea id="editor" spellcheck="true"></textarea><p class="hint">Drafts are saved separately in this browser for each week. Publishing opens GitHub's authenticated editor for the selected week's file so repository credentials are never exposed in this public page.</p></div></main><script>const e=document.getElementById('editor'),s=document.getElementById('status'),w=document.getElementById('week'),pub=document.getElementById('publish'),pre=document.getElementById('preview'),rel=document.getElementById('reload'),copy=document.getElementById('copy');for(let i=1;i<=18;i++){const o=document.createElement('option');o.value=i;o.textContent='Week '+i;w.append(o)}const qp=new URLSearchParams(location.search),initial=Math.min(18,Math.max(1,Number(qp.get('week')||2)));w.value=initial;const pad=n=>String(n).padStart(2,'0'),key=n=>'olympus-chronicle-week-'+pad(n)+'-draft',path=n=>'week-'+pad(n)+'.md';function links(){const n=+w.value,f=path(n);pub.href='https://github.com/jonathanjoelneptune/fantasy-football-conquest/edit/main/chronicles/'+f;pre.href='../weekly-recap.html?week='+n+'#chronicle';history.replaceState(null,'','?week='+n)}async function load(force=false){const n=+w.value,f=path(n);links();s.textContent='Loading committed Week '+n+'…';try{const r=await fetch('../chronicles/'+f+'?'+Date.now(),{cache:'no-store'}),committed=r.ok?await r.text():'';const draft=force?null:localStorage.getItem(key(n));e.value=draft??committed;s.textContent=draft!==null&&!force?'Local Week '+n+' draft restored.':r.ok?'Showing committed Week '+n+' source.':'Week '+n+' has not been published yet. Start the Chronicle here.'}catch(err){const draft=localStorage.getItem(key(n));e.value=draft||'';s.textContent=draft?'Local Week '+n+' draft restored.':'No committed Chronicle found for Week '+n+'. Start it here.'}}w.onchange=()=>load();e.oninput=()=>{const n=+w.value;localStorage.setItem(key(n),e.value);s.textContent='Week '+n+' draft saved locally. Publish when ready.'};rel.onclick=()=>{const n=+w.value;localStorage.removeItem(key(n));load(true)};copy.onclick=async()=>{await navigator.clipboard.writeText(e.value);s.textContent='Week '+w.value+' draft copied. Open Publish in GitHub, paste, and commit.'};load()</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>League of Olympus • Chronicle Publisher</title>
+<style>
+:root{--bg:#0a1220;--card:#101d31;--gold:#c99a3d;--paper:#fffdf7;--ink:#261b13}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f7e8bf;font:16px system-ui}.wrap{max-width:1100px;margin:auto;padding:28px}.card{background:var(--card);border:1px solid #8b6a2e;border-radius:14px;padding:20px;margin:16px 0}h1{color:#f4d486}.row,.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}label{font-weight:800}select,button,a.btn{background:var(--gold);color:#08101c;border:0;border-radius:9px;padding:11px 14px;font-weight:800;text-decoration:none;cursor:pointer}select{background:#f7e8bf}.toolbar{margin:12px 0}.toolbar button{min-width:42px;padding:8px 10px;background:#efe0b8}.editor{width:100%;min-height:62vh;background:var(--paper);color:var(--ink);border:2px solid #8b6a2e;border-radius:10px;padding:28px 32px;font:19px/1.65 Georgia,serif;outline:none;overflow:auto}.editor:focus{box-shadow:0 0 0 3px #c99a3d44}.editor h1{font:700 38px/1.08 Georgia,serif;color:#6f4808;margin:0 0 22px}.editor h2{font:700 29px/1.18 Georgia,serif;color:#6f180f;margin:32px 0 12px}.editor h3{font:700 23px/1.2 Georgia,serif;color:#6f4808;margin:20px 0 10px}.editor p{margin:0 0 18px}.editor strong{color:#76500b}.editor blockquote{border-left:4px solid #c99a3d;margin:20px 0;padding:6px 18px;color:#5d4b3a}.status{opacity:.9}.hint{font-size:14px;opacity:.8;line-height:1.5}.pill{padding:5px 8px;border:1px solid #8b6a2e;border-radius:99px;font-size:12px;color:#f4d486}.danger{background:#754332!important;color:#fff!important}@media(max-width:700px){.wrap{padding:16px}.card{padding:14px}.editor{padding:20px 18px;font-size:18px;min-height:68vh}.editor h1{font-size:32px}.editor h2{font-size:26px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1>Chronicle Publisher</h1>
+<p>Choose a week, write the Chronicle in rich text, preview it inside the full newsletter, then publish the canonical Chronicle file.</p>
+<div class="card">
+<div class="row">
+<label for="week">Week</label><select id="week"></select>
+<button id="reload">Reload committed</button>
+<button id="preview">Preview newsletter</button>
+<button id="publish">Publish</button>
+<span class="pill" id="fileState">Checking file…</span>
+</div>
+<div class="toolbar" aria-label="Formatting toolbar">
+<button data-cmd="bold"><b>B</b></button>
+<button data-cmd="italic"><i>I</i></button>
+<button data-block="h1">Title</button>
+<button data-block="h2">Matchup</button>
+<button data-block="h3">Subtitle</button>
+<button data-block="p">Body</button>
+<button data-cmd="insertUnorderedList">• List</button>
+<button data-cmd="insertOrderedList">1. List</button>
+<button data-cmd="undo">↶</button>
+<button data-cmd="redo">↷</button>
+<button id="clearFormat" class="danger">Clear format</button>
+</div>
+<p class="status" id="status">Loading Chronicle…</p>
+<div id="editor" class="editor" contenteditable="true" spellcheck="true"></div>
+<p class="hint"><b>Rich paste is supported.</b> Copy formatted text from ChatGPT, Word, Google Docs, or another editor and paste it here. Headings, bold, italics, paragraphs, lists, and links are retained. Each week has its own local draft.</p>
+</div>
+<div class="card"><b>Publishing flow</b><p class="hint">Preview reads this browser's current draft directly, so you can inspect the full newsletter before committing. Publish copies the finished HTML and opens the correct authenticated GitHub editor. For a brand-new week it opens GitHub's <b>New file</b> screen instead of a dead edit link. Paste once and commit. A truly one-click commit from this public Pages site would require a private authenticated backend or GitHub App; no repository token is stored here.</p></div>
+</main>
+<script>
+const e=document.getElementById('editor'),s=document.getElementById('status'),w=document.getElementById('week'),preview=document.getElementById('preview'),publish=document.getElementById('publish'),reload=document.getElementById('reload'),fileState=document.getElementById('fileState');
+for(let i=1;i<=18;i++){const o=document.createElement('option');o.value=i;o.textContent='Week '+i;w.append(o)}
+const qp=new URLSearchParams(location.search),initial=Math.min(18,Math.max(1,Number(qp.get('week')||2)));w.value=initial;
+const pad=n=>String(n).padStart(2,'0'),htmlKey=n=>'olympus-chronicle-week-'+pad(n)+'-html',oldKey=n=>'olympus-chronicle-week-'+pad(n)+'-draft',htmlPath=n=>'week-'+pad(n)+'.html',mdPath=n=>'week-'+pad(n)+'.md';
+function sanitize(html){const doc=new DOMParser().parseFromString('<div>'+html+'</div>','text/html'),root=doc.body.firstElementChild;root.querySelectorAll('script,style,iframe,object,embed,link,meta,form,input,button,textarea').forEach(x=>x.remove());root.querySelectorAll('*').forEach(x=>[...x.attributes].forEach(a=>{if(/^on/i.test(a.name)||a.name==='style')x.removeAttribute(a.name);if((a.name==='href'||a.name==='src')&&/^javascript:/i.test(a.value))x.removeAttribute(a.name)}));return root.innerHTML}
+function mdToHtml(md){const rich=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>');return md.replace(/\r/g,'').split('\n').map(x=>{const t=x.trim();if(!t)return'';if(t.startsWith('### '))return'<h3>'+rich(t.slice(4))+'</h3>';if(t.startsWith('## '))return'<h2>'+rich(t.slice(3))+'</h2>';if(t.startsWith('# '))return'<h1>'+rich(t.slice(2))+'</h1>';return'<p>'+rich(t)+'</p>'}).join('')}
+function cleanHtml(){return sanitize(e.innerHTML).trim()}
+function save(){const n=+w.value;localStorage.setItem(htmlKey(n),cleanHtml());s.textContent='Week '+n+' rich-text draft saved locally.'}
+async function committed(){const n=+w.value,html='../chronicles/'+htmlPath(n)+'?'+Date.now(),md='../chronicles/'+mdPath(n)+'?'+Date.now();let r=await fetch(html,{cache:'no-store'});if(r.ok)return{html:sanitize(await r.text()),type:'html',exists:true};r=await fetch(md,{cache:'no-store'});if(r.ok)return{html:mdToHtml(await r.text()),type:'md',exists:true};return{html:'',type:'none',exists:false}}
+async function refreshState(){const n=+w.value;try{const r=await fetch('../chronicles/'+htmlPath(n)+'?'+Date.now(),{cache:'no-store'});fileState.textContent=r.ok?'Published HTML exists':'New HTML file';fileState.dataset.exists=r.ok?'1':'0'}catch(_){fileState.textContent='New HTML file';fileState.dataset.exists='0'}}
+async function load(force=false){const n=+w.value;history.replaceState(null,'','?week='+n);s.textContent='Loading Week '+n+'…';const c=await committed();const draft=force?null:localStorage.getItem(htmlKey(n));const legacy=force?null:localStorage.getItem(oldKey(n));if(draft!==null)e.innerHTML=draft;else if(legacy!==null)e.innerHTML=mdToHtml(legacy);else e.innerHTML=c.html||'<h1>The Chronicle of Week '+n+'</h1><p>Begin this chapter here…</p>';s.textContent=draft!==null?'Local Week '+n+' rich-text draft restored.':c.exists?'Showing committed Week '+n+' source.':'Week '+n+' has not been published yet. Start the Chronicle here.';save();await refreshState()}
+let saveTimer=0;e.addEventListener('input',()=>{clearTimeout(saveTimer);saveTimer=setTimeout(save,250)});
+document.querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>{document.execCommand(b.dataset.cmd,false,null);e.focus();save()});
+document.querySelectorAll('[data-block]').forEach(b=>b.onclick=()=>{document.execCommand('formatBlock',false,b.dataset.block);e.focus();save()});
+document.getElementById('clearFormat').onclick=()=>{document.execCommand('removeFormat');document.execCommand('formatBlock',false,'p');e.focus();save()};
+e.addEventListener('paste',()=>setTimeout(()=>{e.innerHTML=sanitize(e.innerHTML);save()},0));
+w.onchange=()=>load();reload.onclick=()=>{const n=+w.value;localStorage.removeItem(htmlKey(n));localStorage.removeItem(oldKey(n));load(true)};
+preview.onclick=()=>{save();const n=+w.value;window.open('../weekly-recap.html?week='+n+'&draft=1&v='+Date.now()+'#chronicle','_blank')};
+publish.onclick=async()=>{save();const n=+w.value,html=cleanHtml();try{await navigator.clipboard.writeText(html)}catch(_){}const exists=fileState.dataset.exists==='1';const base='https://github.com/jonathanjoelneptune/fantasy-football-conquest/';const url=exists?base+'edit/main/chronicles/'+htmlPath(n):base+'new/main/chronicles?filename='+encodeURIComponent(htmlPath(n));s.textContent='Week '+n+' HTML copied. GitHub is opening; paste it into the file and commit.';window.open(url,'_blank')};
+load();
+</script>
+</body></html>
