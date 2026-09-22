@@ -22,7 +22,7 @@
 <button type="button" id="reload">Reload committed</button>
 <button type="button" id="clear" class="bad">Clear local draft</button>
 <a id="previewLink" class="btn" target="_blank" rel="noopener">Full newsletter preview ↗</a>
-<a id="publishLink" class="btn" target="_blank" rel="noopener">Publish ↗</a>
+<button type="button" id="publishBtn">Publish to GitHub</button>
 <span id="fileState" class="badge">Starting…</span>
 </div>
 <p id="status" class="status">Starting publisher…</p>
@@ -40,7 +40,7 @@
 <div class="previewTop"><b>Full Newsletter Preview</b><a id="openPreview" class="btn" target="_blank" rel="noopener">Open preview in new tab ↗</a></div>
 <iframe id="newsletterFrame" class="newsletterFrame" title="Newsletter preview"></iframe>
 </div>
-<p class="muted"><b>Publish:</b> copies the Markdown and opens the correct GitHub Week file. Paste and commit there. No GitHub credential is stored in this public page.</p>
+<p class="muted"><b>Publish:</b> copies the complete Markdown to your clipboard, opens the correct GitHub Week file, and leaves the editor ready for one paste followed by <b>Commit changes</b>. GitHub does not support safely pre-filling a long new-file body through a public URL, so the paste step is required unless we add an authenticated publishing backend.</p>
 </section>
 </main>
 <script>
@@ -55,7 +55,7 @@ var preview=document.getElementById('preview');
 var frame=document.getElementById('newsletterFrame');
 var openPreview=document.getElementById('openPreview');
 var previewLink=document.getElementById('previewLink');
-var publishLink=document.getElementById('publishLink');
+var publishBtn=document.getElementById('publishBtn');
 var committedExists=false;
 
 for(var i=1;i<=18;i++){var o=document.createElement('option');o.value=String(i);o.textContent='Week '+i;week.appendChild(o);}
@@ -101,9 +101,9 @@ function updateLinks(){
   previewLink.href=previewUrl;
   openPreview.href=previewUrl;
   var base='https://github.com/jonathanjoelneptune/fantasy-football-conquest/';
-  publishLink.href=committedExists
+  publishBtn.dataset.url=committedExists
     ?base+'edit/main/chronicles/'+fileName(n)
-    :base+'new/main?filename='+encodeURIComponent('chronicles/'+fileName(n))+'&value='+encodeURIComponent(source.value);
+    :base+'new/main/chronicles?filename='+encodeURIComponent(fileName(n));
 }
 function syncDraft(){
   var n=Number(week.value),md=source.value,html=renderMarkdown(md);
@@ -160,12 +160,31 @@ document.getElementById('reload').addEventListener('click',function(){var n=Numb
 document.getElementById('clear').addEventListener('click',function(){var n=Number(week.value);localStorage.removeItem(draftKey(n));localStorage.removeItem(legacyKey(n));source.value='';syncDraft();formatted.innerHTML='';});
 previewLink.addEventListener('click',function(){syncDraft();updateLinks();status.textContent='Opening Week '+week.value+' newsletter preview in a new tab.';});
 openPreview.addEventListener('click',function(){syncDraft();updateLinks();});
-publishLink.addEventListener('click',function(){
-  syncDraft();
-  var n=Number(week.value),md=source.value;
+function copyMarkdown(md){
+  var ta=document.createElement('textarea');
+  ta.value=md;
+  ta.setAttribute('readonly','');
+  ta.style.position='fixed';
+  ta.style.left='-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0,ta.value.length);
+  var ok=false;
+  try{ok=document.execCommand('copy');}catch(_){}
+  ta.remove();
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(md).catch(function(){});
+  return ok;
+}
+publishBtn.addEventListener('click',function(){
+  syncDraft();
   updateLinks();
-  status.textContent='Week '+n+' Markdown copied. GitHub will open in a new tab; paste and commit.';
+  var n=Number(week.value),md=source.value,url=publishBtn.dataset.url;
+  var copied=copyMarkdown(md);
+  status.textContent=copied
+    ?'Week '+n+' Markdown copied. GitHub is opening now. Paste once, then Commit changes.'
+    :'GitHub is opening now. If paste is empty, return here and copy the Chronicle source manually.';
+  var tab=window.open(url,'_blank');
+  if(!tab)location.href=url;
 });
 loadWeek(false).catch(function(err){console.error(err);fileState.textContent='Load error';status.textContent='Publisher error: '+String(err&&err.message||err);});
 })();
