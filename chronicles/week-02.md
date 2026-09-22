@@ -1,9 +1,3 @@
-This is excellent context for Week 2 and for the season-long Chronicle. I’ll carry the division structure, relationships, newcomer stories, and defending-champion history forward, but use them as occasional narrative threads rather than forcing them into every matchup.
-
-Week 2 actually has a particularly strong natural theme: **every matchup was an intra-division war.** The West fought the West three times, and the East fought the East three times. On top of that, Apollo’s Archers and Winged Victory Formation faced each other as the league’s married couple, the defending champion Beer Goggles was trying to recover from the Week 1 heartbreak, Hercules was trying to begin his first season 2-0, and true first-time fantasy player BeginnersRuck was trying to follow his Week 1 victory.
-
-I think the chapter should be:
-
 # The Chronicle of Week 2 — The Wars Within
 
 *Before Olympus could be conquered, its armies first turned their weapons upon their own.*
