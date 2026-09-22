@@ -1,54 +1,162 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>League of Olympus • Chronicle Publisher</title>
 <style>
 :root{--bg:#09111e;--card:#101d31;--gold:#c99a3d;--paper:#fffdf7;--ink:#261b13;--line:#8b6a2e}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f7e8bf;font:16px system-ui}.wrap{max-width:1200px;margin:auto;padding:24px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0}h1{margin:0 0 8px;color:#f4d486}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row label{font-weight:900}.btn,button,select{border:0;border-radius:9px;padding:11px 14px;font-weight:900;cursor:pointer}.btn,button{background:var(--gold);color:#08101c;text-decoration:none}select{background:#f7e8bf;color:#261b13}.muted{opacity:.8;font-size:13px;line-height:1.5}.status{margin:10px 0;color:#f4d486;font-weight:800}.workspace{display:grid;grid-template-columns:1fr 1fr;gap:14px}.source{width:100%;min-height:70vh;resize:vertical;background:#07101d;color:#f8f2e2;border:1px solid #786337;border-radius:10px;padding:18px;font:15px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.formatted{min-height:70vh;overflow:auto;background:var(--paper);color:var(--ink);border:1px solid #786337;border-radius:10px;padding:26px 30px;font:18px/1.65 Georgia,serif}.formatted h1{font:700 38px/1.08 Georgia,serif;color:#6f4808;margin:0 0 12px}.formatted h2{font:700 29px/1.18 Georgia,serif;color:#6f180f;margin:34px 0 10px}.formatted h3{font:700 23px/1.2 Georgia,serif;color:#6f4808;margin:18px 0 10px}.formatted p{margin:0 0 18px}.formatted strong{color:#76500b}.formatted em{color:#5e4b3b}.formatted blockquote{border-left:4px solid #c99a3d;margin:20px 0;padding:5px 16px;color:#5d4b3a;background:#fffaf0}.previewWrap{display:none;margin-top:14px}.previewWrap.show{display:block}.newsletterFrame{width:100%;height:78vh;min-height:650px;border:1px solid var(--line);border-radius:10px;background:#fff}.badge{padding:6px 9px;border:1px solid var(--line);border-radius:99px;font-size:12px}.bad{background:#7d352d!important;color:#fff!important}@media(max-width:850px){.wrap{padding:12px}.workspace{grid-template-columns:1fr}.formatted,.source{min-height:55vh}.newsletterFrame{height:82vh;min-height:520px}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f7e8bf;font:16px system-ui}.wrap{max-width:1200px;margin:auto;padding:24px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0}h1{margin:0 0 8px;color:#f4d486}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row label{font-weight:900}button,select,a.btn{border:0;border-radius:9px;padding:11px 14px;font-weight:900;cursor:pointer}button,a.btn{background:var(--gold);color:#08101c;text-decoration:none}select{background:#f7e8bf;color:#261b13}.bad{background:#8b3f35;color:#fff}.muted{opacity:.82;font-size:13px;line-height:1.5}.status{margin:10px 0;color:#f4d486;font-weight:800}.badge{padding:6px 9px;border:1px solid var(--line);border-radius:99px;font-size:12px}.workspace{display:grid;grid-template-columns:1fr 1fr;gap:14px}.source{width:100%;min-height:70vh;resize:vertical;background:#07101d;color:#f8f2e2;border:1px solid #786337;border-radius:10px;padding:18px;font:15px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.formatted{min-height:70vh;overflow:auto;background:var(--paper);color:var(--ink);border:1px solid #786337;border-radius:10px;padding:26px 30px;font:18px/1.65 Georgia,serif}.formatted h1{font:700 38px/1.08 Georgia,serif;color:#6f4808;margin:0 0 14px}.formatted h2{font:700 29px/1.18 Georgia,serif;color:#6f180f;margin:34px 0 10px}.formatted h3{font:700 23px/1.2 Georgia,serif;color:#6f4808;margin:18px 0 10px}.formatted p{margin:0 0 18px}.formatted strong{color:#76500b}.formatted em{color:#5e4b3b}.preview{display:none;margin-top:16px}.preview.show{display:block}.previewTop{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}.newsletterFrame{width:100%;height:78vh;min-height:650px;border:1px solid var(--line);border-radius:10px;background:#fff}
+@media(max-width:850px){.wrap{padding:12px}.workspace{grid-template-columns:1fr}.formatted,.source{min-height:52vh}.newsletterFrame{height:82vh;min-height:520px}}
 </style>
 </head>
 <body>
 <main class="wrap">
 <h1>Chronicle Publisher</h1>
-<div class="muted">Paste the Chronicle exactly as ChatGPT gives it. Markdown is the canonical source; the right side shows the exact formatted result that will be inserted into the newsletter.</div>
-<div class="card">
+<p class="muted">Paste the Chronicle exactly as ChatGPT gives it. The left side stores Markdown; the right side is the live formatted result.</p>
+<section class="card">
 <div class="row">
-<label for="week">Week</label><select id="week"></select>
-<button id="reload">Reload committed</button>
-<button id="clear" class="bad">Clear local draft</button>
-<button id="preview">Full newsletter preview</button>
-<button id="publish">Publish</button>
-<span id="state" class="badge">Ready</span>
+<label for="week">Week</label>
+<select id="week"></select>
+<button type="button" id="reload">Reload committed</button>
+<button type="button" id="clear" class="bad">Clear local draft</button>
+<button type="button" id="previewBtn">Full newsletter preview</button>
+<button type="button" id="publish">Publish</button>
+<span id="fileState" class="badge">Starting…</span>
 </div>
-<p id="status" class="status">Loading…</p>
+<p id="status" class="status">Starting publisher…</p>
 <div class="workspace">
-<div><div class="muted"><b>Chronicle source</b> • Paste the Markdown exactly as written.</div><textarea id="source" class="source" spellcheck="true"></textarea></div>
-<div><div class="muted"><b>Formatted Chronicle</b> • Live rendering of the text at left.</div><article id="formatted" class="formatted"></article></div>
+<div>
+<div class="muted"><b>Chronicle source</b> • Paste Markdown exactly as written.</div>
+<textarea id="source" class="source" spellcheck="true"></textarea>
 </div>
-<div id="previewWrap" class="previewWrap"><iframe id="newsletterFrame" class="newsletterFrame" title="Newsletter preview"></iframe></div>
-<p class="muted"><b>Publish:</b> your Markdown is copied to the clipboard and GitHub opens the correct Week file. If the file does not exist yet, GitHub opens the New File page with the correct filename. Paste and commit. The public Pages site cannot safely hold a repository write token.</p>
+<div>
+<div class="muted"><b>Formatted Chronicle</b> • This is what the Chronicle prose will look like.</div>
+<article id="formatted" class="formatted"></article>
 </div>
+</div>
+<div id="preview" class="preview">
+<div class="previewTop"><b>Full Newsletter Preview</b><a id="openPreview" class="btn" target="_blank" rel="noopener">Open preview in new tab ↗</a></div>
+<iframe id="newsletterFrame" class="newsletterFrame" title="Newsletter preview"></iframe>
+</div>
+<p class="muted"><b>Publish:</b> copies the Markdown and opens the correct GitHub Week file. Paste and commit there. No GitHub credential is stored in this public page.</p>
+</section>
 </main>
 <script>
-const source=document.getElementById('source'),formatted=document.getElementById('formatted'),week=document.getElementById('week'),status=document.getElementById('status'),state=document.getElementById('state'),frame=document.getElementById('newsletterFrame'),wrap=document.getElementById('previewWrap');
-for(let i=1;i<=18;i++){const o=document.createElement('option');o.value=i;o.textContent='Week '+i;week.append(o)}
-const qs=new URLSearchParams(location.search);week.value=String(Math.min(18,Math.max(1,Number(qs.get('week')||2))));
-const pad=n=>String(n).padStart(2,'0'),key=n=>'olympus-chronicle-week-'+pad(n)+'-md',legacyKey=n=>'olympus-chronicle-week-'+pad(n)+'-draft',path=n=>'week-'+pad(n)+'.md';
-function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function inline(t){return esc(t).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')}
-function renderMarkdown(md){const lines=md.replace(/\r/g,'').split('\n'),out=[];let list='';const close=()=>{if(list){out.push('</'+list+'>');list=''}};for(const raw of lines){const t=raw.trim();if(!t){close();continue}if(/^###\s+/.test(t)){close();out.push('<h3>'+inline(t.replace(/^###\s+/,''))+'</h3>');continue}if(/^##\s+/.test(t)){close();out.push('<h2>'+inline(t.replace(/^##\s+/,''))+'</h2>');continue}if(/^#\s+/.test(t)){close();out.push('<h1>'+inline(t.replace(/^#\s+/,''))+'</h1>');continue}if(/^>\s?/.test(t)){close();out.push('<blockquote>'+inline(t.replace(/^>\s?/,''))+'</blockquote>');continue}let m=t.match(/^[-*]\s+(.+)/);if(m){if(list!=='ul'){close();list='ul';out.push('<ul>')}out.push('<li>'+inline(m[1])+'</li>');continue}m=t.match(/^\d+[.)]\s+(.+)/);if(m){if(list!=='ol'){close();list='ol';out.push('<ol>')}out.push('<li>'+inline(m[1])+'</li>');continue}close();out.push('<p>'+inline(t)+'</p>')}close();return out.join('')}
-function save(){const n=+week.value,md=source.value;localStorage.setItem(key(n),md);localStorage.setItem('olympus-chronicle-week-'+pad(n)+'-html',renderMarkdown(md));formatted.innerHTML=renderMarkdown(md);state.textContent='Draft saved';status.textContent='Week '+n+' draft saved locally.'}
-async function fetchText(url,ms=5000){const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),ms);try{const r=await fetch(url,{cache:'no-store',signal:ctl.signal});return r.ok?await r.text():null}catch(_){return null}finally{clearTimeout(timer)}}
-async function load(force=false){const n=+week.value;history.replaceState(null,'','?week='+n);status.textContent='Loading Week '+n+'…';state.textContent='Checking…';let draft=force?null:localStorage.getItem(key(n));if(draft===null&&!force){const old=localStorage.getItem(legacyKey(n));if(old!==null)draft=old}const committed=await fetchText('../chronicles/'+path(n)+'?v='+Date.now());source.value=draft!==null?draft:(committed||'# The Chronicle of Week '+n+'\n\nBegin this chapter here.');formatted.innerHTML=renderMarkdown(source.value);localStorage.setItem(key(n),source.value);localStorage.setItem('olympus-chronicle-week-'+pad(n)+'-html',renderMarkdown(source.value));state.textContent=committed!==null?'Published file exists':'New week file';status.textContent=draft!==null?'Local Week '+n+' draft restored.':committed!==null?'Loaded committed Week '+n+'.':'Week '+n+' has not been published yet.'}
-let timer=0;source.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(save,120)});
-source.addEventListener('paste',()=>setTimeout(save,0));
-week.onchange=()=>{wrap.classList.remove('show');frame.removeAttribute('src');load()};
-document.getElementById('reload').onclick=()=>{localStorage.removeItem(key(+week.value));localStorage.removeItem(legacyKey(+week.value));load(true)};
-document.getElementById('clear').onclick=()=>{const n=+week.value;localStorage.removeItem(key(n));localStorage.removeItem(legacyKey(n));source.value='';save()};
-document.getElementById('preview').onclick=()=>{save();const n=+week.value;wrap.classList.add('show');frame.src='../weekly-recap.html?week='+n+'&draft=1&v='+Date.now()+'#chronicle';frame.scrollIntoView({behavior:'smooth',block:'start'})};
-document.getElementById('publish').onclick=async()=>{save();const n=+week.value,md=source.value;try{await navigator.clipboard.writeText(md)}catch(_){}const committed=await fetchText('../chronicles/'+path(n)+'?v='+Date.now(),2500),base='https://github.com/jonathanjoelneptune/fantasy-football-conquest/';const url=committed!==null?base+'edit/main/chronicles/'+path(n):base+'new/main?filename='+encodeURIComponent('chronicles/'+path(n));status.textContent='Week '+n+' Markdown copied to clipboard. Paste it into GitHub and commit.';location.href=url};
-load().catch(err=>{console.error(err);state.textContent='Load error';status.textContent='Publisher error: '+(err?.message||err)});
+(function(){
+'use strict';
+var source=document.getElementById('source');
+var formatted=document.getElementById('formatted');
+var week=document.getElementById('week');
+var status=document.getElementById('status');
+var fileState=document.getElementById('fileState');
+var preview=document.getElementById('preview');
+var frame=document.getElementById('newsletterFrame');
+var openPreview=document.getElementById('openPreview');
+var committedExists=false;
+
+for(var i=1;i<=18;i++){var o=document.createElement('option');o.value=String(i);o.textContent='Week '+i;week.appendChild(o);}
+var params=new URLSearchParams(location.search);
+week.value=String(Math.min(18,Math.max(1,Number(params.get('week')||2))));
+
+function pad(n){return String(n).padStart(2,'0');}
+function draftKey(n){return 'olympus-chronicle-week-'+pad(n)+'-md';}
+function legacyKey(n){return 'olympus-chronicle-week-'+pad(n)+'-draft';}
+function htmlKey(n){return 'olympus-chronicle-week-'+pad(n)+'-html';}
+function fileName(n){return 'week-'+pad(n)+'.md';}
+function escapeHtml(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function inlineMarkdown(t){
+  return escapeHtml(t)
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*([^*]+?)\*/g,'<em>$1</em>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+}
+function renderMarkdown(md){
+  var lines=String(md||'').replace(/\r/g,'').split('\n');
+  var out=[],list='';
+  function closeList(){if(list){out.push('</'+list+'>');list='';}}
+  lines.forEach(function(raw){
+    var t=raw.trim(),m;
+    if(!t){closeList();return;}
+    if(/^###\s+/.test(t)){closeList();out.push('<h3>'+inlineMarkdown(t.replace(/^###\s+/,''))+'</h3>');return;}
+    if(/^##\s+/.test(t)){closeList();out.push('<h2>'+inlineMarkdown(t.replace(/^##\s+/,''))+'</h2>');return;}
+    if(/^#\s+/.test(t)){closeList();out.push('<h1>'+inlineMarkdown(t.replace(/^#\s+/,''))+'</h1>');return;}
+    if(/^>\s?/.test(t)){closeList();out.push('<blockquote>'+inlineMarkdown(t.replace(/^>\s?/,''))+'</blockquote>');return;}
+    m=t.match(/^[-*]\s+(.+)/);
+    if(m){if(list!=='ul'){closeList();list='ul';out.push('<ul>');}out.push('<li>'+inlineMarkdown(m[1])+'</li>');return;}
+    m=t.match(/^\d+[.)]\s+(.+)/);
+    if(m){if(list!=='ol'){closeList();list='ol';out.push('<ol>');}out.push('<li>'+inlineMarkdown(m[1])+'</li>');return;}
+    closeList();
+    out.push('<p>'+inlineMarkdown(t)+'</p>');
+  });
+  closeList();
+  return out.join('');
+}
+function syncDraft(){
+  var n=Number(week.value),md=source.value,html=renderMarkdown(md);
+  formatted.innerHTML=html;
+  localStorage.setItem(draftKey(n),md);
+  localStorage.setItem(htmlKey(n),html);
+  fileState.textContent='Draft saved';
+  status.textContent='Week '+n+' draft saved locally.';
+}
+async function fetchCommitted(n){
+  var ctl=new AbortController(),timer=setTimeout(function(){ctl.abort();},4500);
+  try{
+    var r=await fetch('../chronicles/'+fileName(n)+'?v='+Date.now(),{cache:'no-store',signal:ctl.signal});
+    if(!r.ok)return null;
+    return await r.text();
+  }catch(err){return null;}
+  finally{clearTimeout(timer);}
+}
+async function loadWeek(clearLocal){
+  var n=Number(week.value);
+  history.replaceState(null,'','?week='+n);
+  preview.classList.remove('show');
+  frame.removeAttribute('src');
+  status.textContent='Loading Week '+n+'…';
+  fileState.textContent='Checking…';
+  var local=clearLocal?null:localStorage.getItem(draftKey(n));
+  if(local===null&&!clearLocal)local=localStorage.getItem(legacyKey(n));
+  var committed=await fetchCommitted(n);
+  committedExists=committed!==null;
+  if(local!==null)source.value=local;
+  else if(committed!==null)source.value=committed;
+  else source.value='# The Chronicle of Week '+n+'\n\nBegin this chapter here.';
+  formatted.innerHTML=renderMarkdown(source.value);
+  localStorage.setItem(draftKey(n),source.value);
+  localStorage.setItem(htmlKey(n),renderMarkdown(source.value));
+  fileState.textContent=committedExists?'Published file exists':'New week file';
+  status.textContent=local!==null?'Local Week '+n+' draft restored.':committedExists?'Loaded committed Week '+n+'.':'Week '+n+' has not been published yet.';
+}
+function showPreview(){
+  syncDraft();
+  var n=Number(week.value);
+  var url='../weekly-recap.html?week='+n+'&draft=1&v='+Date.now()+'#chronicle';
+  preview.classList.add('show');
+  frame.src=url;
+  openPreview.href=url;
+  status.textContent='Showing full Week '+n+' newsletter preview below.';
+  preview.scrollIntoView({behavior:'smooth',block:'start'});
+}
+source.addEventListener('input',function(){formatted.innerHTML=renderMarkdown(source.value);clearTimeout(source._saveTimer);source._saveTimer=setTimeout(syncDraft,150);});
+source.addEventListener('paste',function(){setTimeout(function(){formatted.innerHTML=renderMarkdown(source.value);syncDraft();},0);});
+week.addEventListener('change',function(){loadWeek(false);});
+document.getElementById('reload').addEventListener('click',function(){var n=Number(week.value);localStorage.removeItem(draftKey(n));localStorage.removeItem(legacyKey(n));loadWeek(true);});
+document.getElementById('clear').addEventListener('click',function(){var n=Number(week.value);localStorage.removeItem(draftKey(n));localStorage.removeItem(legacyKey(n));source.value='';syncDraft();formatted.innerHTML='';});
+document.getElementById('previewBtn').addEventListener('click',showPreview);
+document.getElementById('publish').addEventListener('click',function(){
+  syncDraft();
+  var n=Number(week.value),md=source.value;
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(md).catch(function(){});
+  var base='https://github.com/jonathanjoelneptune/fantasy-football-conquest/';
+  var url=committedExists?base+'edit/main/chronicles/'+fileName(n):base+'new/main?filename='+encodeURIComponent('chronicles/'+fileName(n));
+  status.textContent='Week '+n+' Markdown copied. Paste it into GitHub and commit.';
+  window.open(url,'_blank','noopener');
+});
+loadWeek(false).catch(function(err){console.error(err);fileState.textContent='Load error';status.textContent='Publisher error: '+String(err&&err.message||err);});
+})();
 </script>
-</body></html>
+</body>
+</html>
