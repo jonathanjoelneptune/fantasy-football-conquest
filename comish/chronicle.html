@@ -101,7 +101,9 @@ function updateLinks(){
   previewLink.href=previewUrl;
   openPreview.href=previewUrl;
   var base='https://github.com/jonathanjoelneptune/fantasy-football-conquest/';
-  publishLink.href=committedExists?base+'edit/main/chronicles/'+fileName(n):base+'new/main/chronicles?filename='+encodeURIComponent(fileName(n));
+  publishLink.href=committedExists
+    ?base+'edit/main/chronicles/'+fileName(n)
+    :base+'new/main?filename='+encodeURIComponent('chronicles/'+fileName(n))+'&value='+encodeURIComponent(source.value);
 }
 function syncDraft(){
   var n=Number(week.value),md=source.value,html=renderMarkdown(md);
