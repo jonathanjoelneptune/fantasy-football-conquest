@@ -45,13 +45,13 @@ async function editorialChronicle(){
   const pane=q('#chronicle');
   if(!pane)return false;
   qa(':scope > .section',pane).forEach(sec=>{
-    const h=txt(q('h2',sec));
+    const h=(q('h2',sec)?.textContent||'').replace(/\s+/g,' ').trim();
     if(/^The Chronicle/i.test(h)||/^The Six Battles/i.test(h))sec.remove();
   });
   const sec=document.createElement('section');
   sec.className='section customChronicleSection';
   sec.innerHTML='<h2>The Chronicle • Week '+W+'</h2><article class="chron richChronicle">'+out.join('')+'</article>';
-  const map=qa(':scope > .section',pane).find(sec=>/The World Before/i.test(txt(q('h2',sec))));
+  const map=qa(':scope > .section',pane).find(sec=>/The World Before/i.test((q('h2',sec)?.textContent||'').replace(/\s+/g,' ').trim()));
   map?map.after(sec):pane.prepend(sec);
   if(!document.getElementById('richChronicleStyles')){
     const st=document.createElement('style');st.id='richChronicleStyles';
