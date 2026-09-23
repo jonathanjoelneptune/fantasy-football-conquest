@@ -1,4 +1,5 @@
   // WEEKLY_NEWSLETTER_V820_START
+  // Architecture v830: one live League engine, one newsletter presentation.
   // Canonical newsletter bridge.
   // This code runs INSIDE the main application closure, so it is the only
   // newsletter code allowed to read Season Center's private analysis helpers.
@@ -47,7 +48,7 @@
 
   function newsletterConquestV830(week){
     try{
-      if(typeof stateThroughWeek!=='function'||!Array.isArray(teams)||!Array.isArray(territoryDefs))return null;
+      if(typeof stateThroughWeek!=='function'||typeof teams==='undefined'||typeof territoryDefs==='undefined'||!Array.isArray(teams)||!Array.isArray(territoryDefs))return null;
       const state=stateThroughWeek(Number(week))||{};
       const own=state.owners||{};
       const teamRows=teams.map(t=>({id:t.id,name:t.name,color:t.color||t.hex||null}));
