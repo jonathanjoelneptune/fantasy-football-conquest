@@ -97,11 +97,12 @@
 
     // Capture the ACTUAL Season Center views. These are presentation snapshots
     // produced by the live app's renderer, not newsletter-side recreations.
-    const [honorsHtml,standingsHtml,legendsHtml]=await Promise.all([
-      newsletterSnapshotTabV830('week',week),
-      newsletterSnapshotTabV830('standings',week),
-      newsletterSnapshotTabV830('legends',week)
-    ]);
+    // Season Center rendering uses shared mutable tab/week state, so snapshot
+    // one view at a time. Parallel rendering would race and cross-contaminate
+    // the captured sections.
+    const honorsHtml=await newsletterSnapshotTabV830('week',week);
+    const standingsHtml=await newsletterSnapshotTabV830('standings',week);
+    const legendsHtml=await newsletterSnapshotTabV830('legends',week);
 
     let allPlayHtml='';
     try{allPlayHtml=hubWeekAllPlayTable(src,week)||''}catch(_){}
