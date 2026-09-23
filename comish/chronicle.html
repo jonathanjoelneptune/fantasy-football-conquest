@@ -28,18 +28,21 @@ const w=document.getElementById('week'),src=document.getElementById('source'),st
 for(let i=1;i<=18;i++){const o=document.createElement('option');o.value=i;o.textContent='Week '+i;w.appendChild(o)}
 const p=new URLSearchParams(location.search);w.value=String(Math.max(1,Number(p.get('week')||2)));
 const pad=n=>String(n).padStart(2,'0'),key=n=>'olympus-chronicle-week-'+pad(n)+'-md';
-function update(){
+async function update(){
  const n=Number(w.value),md='week-'+pad(n)+'.md',map='week-'+pad(n)+'.jpg',before=n===1?'original.jpg':'week-'+pad(n-1)+'.jpg',climb='climb-week-'+pad(n)+'.jpg';
  history.replaceState(null,'','?week='+n);
  localStorage.setItem(key(n),src.value);
  preview.href='../weekly-recap.html?week='+n+'&draft=1&v='+Date.now();
- edit.href=repo+'edit/main/chronicles/'+md;
  upload.href=repo+'upload/main/chronicle-snapshots';
  document.getElementById('mdFile').textContent='chronicles/'+md;
  document.getElementById('mapFile').textContent='chronicle-snapshots/'+map;
  document.getElementById('beforeFile').textContent='chronicle-snapshots/'+before;
  document.getElementById('climbFile').textContent='chronicle-snapshots/'+climb;
- status.textContent='Week '+n+' draft saved locally.';
+ let exists=false;
+ try{const rr=await fetch('../chronicles/'+md+'?v='+Date.now(),{cache:'no-store'});exists=rr.ok}catch(_){}
+ edit.href=exists?repo+'edit/main/chronicles/'+md:repo+'new/main/chronicles?filename='+encodeURIComponent(md);
+ edit.textContent=exists?'Open Chronicle File in GitHub ↗':'Create Chronicle File in GitHub ↗';
+ status.textContent='Week '+n+' draft saved locally. Live scoreboard, honors, standings, legends and conquest data are automatic.';
 }
 async function load(){
  const n=Number(w.value);let md=localStorage.getItem(key(n));
@@ -47,7 +50,7 @@ async function load(){
  src.value=md||'# The Chronicle of Week '+n+'\n\n';
  update();
 }
-src.addEventListener('input',()=>{clearTimeout(src._t);src._t=setTimeout(update,120)});
+src.addEventListener('input',()=>{clearTimeout(src._t);src._t=setTimeout(()=>update(),180)});
 w.addEventListener('change',load);
 document.getElementById('copy').addEventListener('click',async()=>{update();try{await navigator.clipboard.writeText(src.value);status.textContent='Chronicle copied. Open the GitHub file and paste/commit.'}catch(_){src.select();document.execCommand('copy');status.textContent='Chronicle copied. Open the GitHub file and paste/commit.'}});
 load();
